@@ -222,12 +222,14 @@ export default function Portfolio() {
     };
 
     const fileName = resumeFiles[type];
-    const resumePath = `/src/assets/${fileName}`;
+    // Use /assets/ path for Vercel deployment
+    const resumePath = `/assets/${fileName}`;
 
     // Create a temporary link and trigger download
     const link = document.createElement('a');
     link.href = resumePath;
     link.download = fileName;
+    link.setAttribute('crossOrigin', 'anonymous');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
