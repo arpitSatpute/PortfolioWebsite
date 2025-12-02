@@ -217,7 +217,7 @@ export default function Portfolio() {
     // Map resume types to file names in assets
     const resumeFiles: Record<string, string> = {
       'fullstack': 'Arpit_Satpute_Full_Stack_Java_Developer.pdf',
-      'blockchain': 'CV-Arpit_Blockchain.pdf.pdf',
+      'blockchain': 'CV-Arpit_BlockChain.pdf',
       'both': 'Arpit_Satpute_Blockchain_Full_Stack_Java_Developer.pdf'
     };
 
@@ -225,14 +225,26 @@ export default function Portfolio() {
     // Use /assets/ path for Vercel deployment
     const resumePath = `/assets/${fileName}`;
 
-    // Create a temporary link and trigger download
-    const link = document.createElement('a');
-    link.href = resumePath;
-    link.download = fileName;
-    link.setAttribute('crossOrigin', 'anonymous');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Fetch and download the file to ensure proper handling
+    fetch(resumePath)
+      .then(response => {
+        if (!response.ok) throw new Error('File not found');
+        return response.blob();
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(error => {
+        console.error('Download failed:', error);
+        alert('Failed to download resume. Please try again.');
+      });
   };
 
   const scrollToSection = (section: string) => {
