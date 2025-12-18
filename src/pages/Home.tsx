@@ -95,18 +95,18 @@ export default function Portfolio() {
 
   const projects = [
     {
-      title: "Vermint",
-      description: "Decentralized E-Commerce Platform | Blockchain-based NFT digital twins of physical products",
+      title: "VeriMint",
+      description: "Decentralised E-Commerce NFT Marketplace for physical and virtual goods as encrypted ERC-1155 digital twins",
       liveLink: "https://verimint.vercel.app/",
       githubLink: "https://github.com/arpitSatpute/VeriMint.git",
       tech: ["Solidity", "Foundry", "React", "IPFS", "OpenZeppelin", "ERC1155"],
       details: [
-        "ERC1155 smart contracts for multi-token product representation",
-        "Escrow and order management system with automated redemption workflows",
-        "IPFS integration for immutable product provenance and metadata",
-        "React frontend with Wagmi/Viem for Web3 connectivity",
-        "Trustless escrow enabling secure transactions between buyers and sellers",
-        "On-chain verification for product authenticity and ownership tracking"
+        "ERC1155 contracts mint digital twins for physical and virtual inventory with encrypted delivery data",
+        "Lit Protocol guards shipping addresses with time-locked decrypt (7-day merchant window) and access logs",
+        "Escrowed payments auto-release on fulfillment with buyer refunds when decrypt deadlines are missed",
+        "Zero-knowledge proof commitments secure address unlock requests and prevent data leakage",
+        "React dApp with Wagmi/Viem for fast wallet flows plus merchant dashboard for inventory and sales ops",
+        "IPFS-backed metadata and provenance to preserve authenticity across orders and handoffs"
       ]
     },
     {
@@ -217,7 +217,7 @@ export default function Portfolio() {
     // Map resume types to file names in assets
     const resumeFiles: Record<string, string> = {
       'fullstack': 'Arpit_Satpute_Full_Stack_Java_Developer.pdf',
-      'blockchain': 'CV-Arpit_BlockChain.pdf',
+      'blockchain': 'Arpit_Satpute_Blockchain_Developer.pdf',
       'both': 'Arpit_Satpute_Blockchain_Full_Stack_Java_Developer.pdf'
     };
 
