@@ -50,7 +50,7 @@ export default function Portfolio() {
 
   const profile = {
     name: "Arpit Satpute",
-    title: "Full Stack & Blockchain Developer",
+    title: "Blockchain Developer",
     tagline: "Building scalable applications and decentralized solutions",
     email: "arpitrameshsatpute6986@gmail.com",
     image: profileImage,
@@ -225,7 +225,7 @@ export default function Portfolio() {
     const resumeFiles: Record<string, string> = {
       'fullstack': 'Arpit_Satpute_Full_Stack_Java_Developer.pdf',
       'blockchain': 'Arpit_Satpute_Blockchain_Developer.pdf',
-      'both': 'Arpit_Satpute_Blockchain_Full_Stack_Java_Developer.pdf'
+      'both': 'Arpit_Satpute_Software_Developer.pdf'
     };
 
     const fileName = resumeFiles[type];
@@ -475,7 +475,7 @@ export default function Portfolio() {
                     }`}
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Full Stack & Blockchain
+                    Software Developer Resume
                   </button>
                 </div>
               </div>
@@ -578,7 +578,7 @@ export default function Portfolio() {
                           : 'bg-blue-600/60 text-white hover:bg-blue-600'
                       }`}
                     >
-                      Full Stack & Blockchain
+                      Software Developer
                     </button>
                   </div>
                 </div>
