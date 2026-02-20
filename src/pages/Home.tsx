@@ -13,6 +13,139 @@ interface Project {
   details: string[];
 }
 
+
+// ── Hero Highlights: Typewriter + Tech Chips ──────────────────────────────
+const ROLES = [
+  'Full Stack Developer',
+  'Blockchain Engineer',
+  'Smart Contract Dev',
+  'DeFi Protocol Builder',
+  'Web3 Dev',
+];
+
+const TECH_CHIPS = [
+  { label: 'Ethereum', color: '#627eea' },
+  { label: 'Solana', color: '#9945ff' },
+  { label: 'Solidity', color: '#627eea' },
+  { label: 'Rust', color: '#f74c00' },
+  { label: 'React', color: '#3178c6' },
+  { label: 'Spring Boot', color: '#6db33f' },
+  { label: 'Node.js', color: '#68a063' },
+];
+
+function HeroHighlights({ darkMode }: { darkMode: boolean }) {
+  const [roleIdx, setRoleIdx] = useState(0);
+  const [displayed, setDisplayed] = useState('');
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const fullText = ROLES[roleIdx];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!deleting && displayed.length < fullText.length) {
+      timeout = setTimeout(() => setDisplayed(fullText.slice(0, displayed.length + 1)), 60);
+    } else if (!deleting && displayed.length === fullText.length) {
+      timeout = setTimeout(() => setDeleting(true), 2000);
+    } else if (deleting && displayed.length > 0) {
+      timeout = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 35);
+    } else if (deleting && displayed.length === 0) {
+      setDeleting(false);
+      setRoleIdx((i) => (i + 1) % ROLES.length);
+    }
+    return () => clearTimeout(timeout);
+  }, [displayed, deleting, roleIdx]);
+
+  return (
+    <div style={{ marginBottom: '36px' }}>
+      {/* Typewriter role line */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        marginBottom: '24px',
+        minHeight: '36px',
+      }}>
+        <span style={{
+          fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
+          fontWeight: 600,
+          color: darkMode ? '#e2e8f0' : '#334155',
+        }}>
+          I build{' '}
+        </span>
+        <span style={{
+          fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
+          fontWeight: 700,
+          background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          minWidth: '220px',
+        }}>
+          {displayed}
+        </span>
+        {/* Blinking cursor */}
+        <span style={{
+          display: 'inline-block',
+          width: '2px',
+          height: '22px',
+          background: '#3b82f6',
+          borderRadius: '2px',
+          animation: 'blink 1s step-end infinite',
+          flexShrink: 0,
+        }} />
+        <style>{`@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }`}</style>
+      </div>
+
+      {/* Tech chip pills */}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '8px',
+      }}>
+        {TECH_CHIPS.map(({ label, color }) => (
+          <span
+            key={label}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: '999px',
+              fontSize: '12px',
+              fontWeight: 600,
+              letterSpacing: '0.02em',
+              border: `1px solid ${color}40`,
+              background: `${color}12`,
+              color: color,
+              cursor: 'default',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+            }}
+            onMouseEnter={e => {
+              const el = e.currentTarget as HTMLSpanElement;
+              el.style.transform = 'translateY(-2px)';
+              el.style.boxShadow = `0 4px 12px ${color}40`;
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget as HTMLSpanElement;
+              el.style.transform = '';
+              el.style.boxShadow = '';
+            }}
+          >
+            <span style={{
+              width: '6px', height: '6px',
+              borderRadius: '50%',
+              background: color,
+              flexShrink: 0,
+            }} />
+            {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState('about');
   const [darkMode, setDarkMode] = useState(true);
@@ -24,13 +157,13 @@ export default function Portfolio() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      
+
       // If at the top, set to 'home'
       if (window.scrollY < 100) {
         setActiveSection('home');
         return;
       }
-      
+
       // Detect which section is in view
       const sections = ['about', 'skills', 'projects', 'education'];
       for (const section of sections) {
@@ -61,38 +194,38 @@ export default function Portfolio() {
   };
 
   const skills = [
-    { 
-      category: "Languages", 
+    {
+      category: "Languages",
       icon: <Languages className="w-5 h-5" />,
-      items: ["Java", "Rust", "JavaScript", "TypeScript", "Solidity", "Python", "C++"] 
-    },
-    { 
-      category: "Blockchain", 
-      icon: <Blocks className="w-5 h-5" />,
-      items: ["Solana", "Ethereum", "Solidity", "Smart Contracts", "Foundry"] 
+      items: ["Java", "Rust", "JavaScript", "TypeScript", "Solidity", "Python", "C++"]
     },
     {
-      category: "Backend Development", 
-      icon: <Code2 className="w-5 h-5" />,
-      items: ["Spring Boot", "Spring MVC", "Hibernate", "REST APIs", "Microservices"] 
+      category: "Blockchain",
+      icon: <Blocks className="w-5 h-5" />,
+      items: ["Solana", "Ethereum", "Solidity", "Smart Contracts", "Foundry"]
     },
-    { 
-      category: "Database", 
+    {
+      category: "Backend Development",
+      icon: <Code2 className="w-5 h-5" />,
+      items: ["Spring Boot", "Spring MVC", "Hibernate", "REST APIs", "Microservices"]
+    },
+    {
+      category: "Database",
       icon: <Database className="w-5 h-5" />,
       items: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "IPFS"]
     },
-    { 
-      category: "Frontend Frameworks and Libraries", 
+    {
+      category: "Frontend Frameworks and Libraries",
       icon: <Code2 className="w-5 h-5" />,
-      items: ["React", "JavaScript", "React Native", "Wagmi", "Viem", "Tailwind CSS", "Bootstrap", "Hero Ui"] 
+      items: ["React", "JavaScript", "React Native", "Wagmi", "Viem", "Tailwind CSS", "Bootstrap", "Hero Ui"]
     },
-    { 
-      category: "Tools", 
+    {
+      category: "Tools",
       icon: <Settings className="w-5 h-5" />,
-      items: ["Git", "Github", "Docker"] 
+      items: ["Git", "Github", "Docker"]
     },
-    
-    
+
+
   ];
 
   const projects = [
@@ -217,7 +350,7 @@ export default function Portfolio() {
       field: "Computer Engineering",
       year: "2021 - 2025",
       gpa: "9.57/10",
-      
+
     },
     {
       institution: "Bhalerao Jr. Science College, Saoner",
@@ -225,7 +358,7 @@ export default function Portfolio() {
       field: "Physics, Chemistry, Mathematics, Biology",
       year: "2020 - 2022",
       gpa: "76.83 %",
-      
+
     },
     {
       institution: "Vidya Niketan Higher Secondary School, Urjanagar",
@@ -233,7 +366,7 @@ export default function Portfolio() {
       field: "SSC",
       year: "2019 - 2020",
       gpa: "92.00 %",
-      
+
     }
   ];
 
@@ -282,12 +415,12 @@ export default function Portfolio() {
     document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const bgClass = darkMode 
-    ? 'bg-slate-950 text-white' 
+  const bgClass = darkMode
+    ? 'bg-slate-950 text-white'
     : 'bg-gray-50 text-gray-900';
-  
-  const cardBg = darkMode 
-    ? 'bg-slate-900 border-slate-800' 
+
+  const cardBg = darkMode
+    ? 'bg-slate-900 border-slate-800'
     : 'bg-white border-gray-200';
 
   const accentColor = darkMode ? 'text-blue-400' : 'text-blue-600';
@@ -295,14 +428,14 @@ export default function Portfolio() {
   const modalBg = darkMode ? 'bg-slate-900' : 'bg-white';
 
   return (
-    
+
     <div className={`min-h-screen transition-colors duration-300 ${bgClass} relative overflow-hidden`}>
       {/* Subtle Background Elements */}
       <div className="fixed inset-0 pointer-events-none">
         {/* Gradient orbs */}
         <div className={`absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-20 ${darkMode ? 'bg-blue-500' : 'bg-blue-300'}`} />
         <div className={`absolute bottom-0 left-0 w-96 h-96 rounded-full blur-3xl opacity-20 ${darkMode ? 'bg-purple-500' : 'bg-purple-300'}`} />
-        
+
         {/* Additional orbs for light theme */}
         {!darkMode && (
           <>
@@ -310,30 +443,30 @@ export default function Portfolio() {
             <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-10 bg-pink-300" />
           </>
         )}
-        
+
         {/* Grid pattern */}
-        <div className={`absolute inset-0 ${darkMode ? 'bg-slate-900/30' : 'bg-white/40'}`} 
+        <div className={`absolute inset-0 ${darkMode ? 'bg-slate-900/30' : 'bg-white/40'}`}
           style={{
             backgroundImage: `linear-gradient(${darkMode ? 'rgba(148, 163, 184, 0.05)' : 'rgba(71, 85, 105, 0.04)'} 1px, transparent 1px), linear-gradient(90deg, ${darkMode ? 'rgba(148, 163, 184, 0.05)' : 'rgba(71, 85, 105, 0.04)'} 1px, transparent 1px)`,
             backgroundSize: '50px 50px'
           }}
         />
-        
+
         {/* Radial gradient overlay for light theme */}
         {!darkMode && (
           <>
             <div className="absolute inset-0" style={{
               backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(191, 219, 254, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(243, 232, 255, 0.15) 0%, transparent 50%)'
             }} />
-            
+
             {/* Subtle accent lines */}
             <div className="absolute top-1/4 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-blue-200/20 to-transparent" />
             <div className="absolute bottom-1/3 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-200/20 to-transparent" />
-            
+
             {/* Corner accents */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100/20 to-transparent rounded-full blur-2xl" />
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-purple-100/20 to-transparent rounded-full blur-2xl" />
-            
+
             {/* Center glow */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-white/30 to-transparent rounded-full blur-3xl" />
           </>
@@ -342,444 +475,611 @@ export default function Portfolio() {
 
       {/* Content wrapper with relative positioning */}
       <div className="relative z-10">
+        {/* ═══════════════ MINIMAL HEADER ═══════════════ */}
         <header
-          className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          isScrolled
-            ? darkMode 
-              ? 'bg-slate-950/85 border-slate-700 shadow-lg shadow-slate-900/50' 
-              : 'bg-white/85 border-gray-200 shadow-md'
-            : darkMode
-            ? 'bg-transparent border-slate-800/30'
-            : 'bg-transparent border-gray-200/30'
-        } backdrop-blur-xl border-b`}
-      >
-        <nav className="container mx-auto px-6 py-4 max-w-7xl">
-          <div className="flex justify-between items-center">
-            {/* Logo / Brand with Section Indicator */}
-            <div className="flex items-center gap-2 group cursor-pointer">
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${isScrolled ? 'shadow-lg' : ''}`}>
-                <span className="text-white font-bold text-lg">A</span>
-              </div>
-              <div>
-                <h1 className={`text-xl font-bold transition-all duration-300 ${isScrolled ? 'opacity-100' : 'opacity-90'}`}>{profile.name}</h1>
-                <p className= "text-xs font-medium transition-all duration-300">
-                  Developer
-                </p>
-              </div>
-            </div>
-
-            {/* Desktop Navigation Links */}
-            <div className="hidden md:flex items-center gap-8">
-              {[
-                { name: 'home', label: 'Home' },
-                { name: 'about', label: 'About' },
-                { name: 'skills', label: 'Skills' },
-                { name: 'projects', label: 'Projects' },
-                { name: 'education', label: 'Education' }
-              ].map((item) => {
-                const isAtTop = window.scrollY < 100;
-                let isActive = false;
-                
-                if (item.name === 'home') {
-                  isActive = isAtTop;
-                } else {
-                  isActive = activeSection === item.name;
-                }
-                
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      if (item.name === 'home') {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      } else {
-                        scrollToSection(item.name);
-                      }
-                    }}
-                    className={`text-sm font-medium transition-all duration-200 relative group ${
-                      isActive
-                        ? darkMode
-                          ? 'text-blue-400 font-semibold'
-                          : 'text-blue-600 font-semibold'
-                        : darkMode
-                        ? 'text-slate-400 group-hover:text-slate-200'
-                        : 'text-gray-600 group-hover:text-gray-900'
-                    }`}
-                  >
-                    {item.label}
-                    <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-300 ${
-                      isActive
-                        ? 'w-full' 
-                        : 'w-0 group-hover:w-full'
-                    }`} />
-                  </button>
-                );
-              })}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 100,
+            transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+            background: isScrolled
+              ? darkMode ? "rgba(10, 10, 15, 0.7)" : "rgba(255, 255, 255, 0.7)"
+              : "transparent",
+            backdropFilter: isScrolled ? "blur(12px) saturate(160%)" : "none",
+            WebkitBackdropFilter: isScrolled ? "blur(12px) saturate(160%)" : "none",
+            borderBottom: isScrolled ? (darkMode ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)") : "1px solid transparent",
+          }}
+        >
+          <nav style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 20px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px" }}>
               
-              {/* Resume Dropdown */}
-              
-            </div>
-
-            {/* Right Side Actions */}
-            <div className="flex items-center gap-4">
-
-              {/* Theme Toggle */}
+              {/* Brand */}
               <button
-                onClick={() => setDarkMode(!darkMode)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-                  isScrolled
-                    ? darkMode
-                      ? 'bg-slate-800/60 hover:bg-slate-700/80'
-                      : 'bg-gray-100/60 hover:bg-gray-200/80'
-                    : darkMode
-                    ? 'bg-slate-900/40 hover:bg-slate-800/60'
-                    : 'bg-gray-100/40 hover:bg-gray-200/60'
-                }`}
-                title={darkMode ? 'Light mode' : 'Dark mode'}
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: "8px" }}
               >
-                {darkMode ? (
-                  <Sun className="w-5 h-5 text-white" />
-                ) : (
-                  <Moon className="w-5 h-5 text-black" />
-                )}
-              </button>
-
-              {/* CTA Button - Desktop */}
-              {/* Resume Dropdown - Desktop */}
-              <div className="relative group hidden sm:block">
-                <button
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl hover:scale-105 ${isScrolled ? 'shadow-blue-500/30' : ''}`}
-                >
-                  <Download className="w-4 h-4" />
-                  Resume
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                
-                {/* Dropdown Menu */}
-                <div className={`absolute right-0 mt-0 w-56 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 ${
-                  darkMode
-                    ? 'bg-slate-800 border border-slate-700'
-                    : 'bg-white border border-gray-200'
-                }`}>
-                  <button
-                    onClick={() => handleDownloadResume('fullstack')}
-                    className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors rounded-t-lg flex items-center gap-2 ${
-                      darkMode
-                        ? 'hover:bg-slate-700 text-slate-200'
-                        : 'hover:bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    <Code2 className="w-4 h-4" />
-                    Full Stack Resume
-                  </button>
-                  <button
-                    onClick={() => handleDownloadResume('blockchain')}
-                    className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors border-t flex items-center gap-2 ${
-                      darkMode
-                        ? 'hover:bg-slate-700 text-slate-200 border-slate-700'
-                        : 'hover:bg-gray-100 text-gray-700 border-gray-200'
-                    }`}
-                  >
-                    <Blocks className="w-4 h-4" />
-                    Blockchain Resume
-                  </button>
-                  <button
-                    onClick={() => handleDownloadResume('both')}
-                    className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors rounded-b-lg border-t flex items-center gap-2 ${
-                      darkMode
-                        ? 'hover:bg-slate-700 text-slate-200 border-slate-700'
-                        : 'hover:bg-gray-100 text-gray-700 border-gray-200'
-                    }`}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Software Developer Resume
-                  </button>
+                <div style={{ fontWeight: 800, fontSize: "18px", color: darkMode ? "#fff" : "#000", letterSpacing: "-1px" }}>
+                  AS<span style={{ color: "#3b82f6" }}>.</span>
                 </div>
+              </button>
+
+              {/* Desktop Menu */}
+              <div className="hidden md:flex" style={{ alignItems: "center", gap: "24px" }}>
+                {[
+                  { name: "home", label: "Home" },
+                  { name: "about", label: "About" },
+                  { name: "skills", label: "Skills" },
+                  { name: "projects", label: "Projects" },
+                  { name: "education", label: "Education" },
+                ].map((item) => {
+                  const isAtTop = typeof window !== "undefined" && window.scrollY < 100;
+                  const isActive = item.name === "home" ? isAtTop : activeSection === item.name;
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={() => item.name === "home" ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection(item.name)}
+                      style={{
+                        background: "none", border: "none", cursor: "pointer", padding: "4px 0",
+                        fontSize: "13px", fontWeight: 500,
+                        color: isActive ? (darkMode ? "#fff" : "#000") : (darkMode ? "#888" : "#666"),
+                        transition: "color 0.2s ease",
+                        position: "relative",
+                      }}
+                    >
+                      {item.label}
+                      {isActive && <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "1.5px", background: "#3b82f6", borderRadius: "10px" }} />}
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Mobile Menu Toggle */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`md:hidden p-2.5 rounded-lg transition-all ${
-                  isScrolled
-                    ? darkMode
-                      ? 'bg-slate-800/60 hover:bg-slate-700/80'
-                      : 'bg-gray-100/60 hover:bg-gray-200/80'
-                    : darkMode
-                    ? 'bg-slate-900/40 hover:bg-slate-800/60'
-                    : 'bg-gray-100/40 hover:bg-gray-200/60'
-                }`}
-              >
-                {isMobileMenuOpen ? (
-                  <X className="w-5 h-5" />
-                ) : (
-                  <Menu className="w-5 h-5" />
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation Menu */}
-          {isMobileMenuOpen && (
-            <div className={`md:hidden mt-4 pt-4 border-t transition-all duration-200 ${darkMode ? 'border-slate-800' : 'border-gray-200'}`}>
-              <div className="flex flex-col gap-3">
-                {/* Home Button */}
+              {/* Actions */}
+              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                 <button
-                  onClick={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setActiveSection('about');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`text-left px-4 py-2 rounded-lg font-medium transition-all ${
-                    darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100'
-                  }`}
+                  onClick={() => setDarkMode(!darkMode)}
+                  style={{ background: "none", border: "none", cursor: "pointer", color: darkMode ? "#888" : "#666", display: "flex", padding: 0 }}
                 >
-                  Home
+                  {darkMode ? <Sun size={18} /> : <Moon size={18} />}
                 </button>
 
-                {['about', 'skills', 'projects', 'education'].map((item) => (
+                {/* Resume minimal dropdown */}
+                <div className="relative group hidden sm:block">
+                  <button style={{ 
+                    background: "none", border: "none", cursor: "pointer", padding: 0, 
+                    fontSize: "13px", fontWeight: 600, color: "#3b82f6", display: "flex", alignItems: "center", gap: "4px" 
+                  }}>
+                    Resume <ChevronDown size={14} />
+                  </button>
+                  <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                    <div style={{ 
+                      background: darkMode ? "#111" : "#fff", border: "1px solid " + (darkMode ? "#222" : "#eee"), 
+                      borderRadius: "8px", overflow: "hidden", minWidth: "160px", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" 
+                    }}>
+                      {[
+                        { key: "fullstack", label: "Full Stack" },
+                        { key: "blockchain", label: "Blockchain" },
+                        { key: "both", label: "General" }
+                      ].map((r) => (
+                        <button 
+                          key={r.key} 
+                          onClick={() => handleDownloadResume(r.key as any)}
+                          style={{ 
+                            width: "100%", textAlign: "left", padding: "10px 16px", border: "none", background: "none", 
+                            fontSize: "12px", color: darkMode ? "#ccc" : "#444", cursor: "pointer", transition: "background 0.2s" 
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = darkMode ? "#222" : "#f5f5f5"}
+                          onMouseLeave={e => e.currentTarget.style.background = "none"}
+                        >
+                          {r.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="md:hidden"
+                  style={{ background: "none", border: "none", cursor: "pointer", color: darkMode ? "#fff" : "#000", padding: 0 }}
+                >
+                  {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Drawer */}
+            {isMobileMenuOpen && (
+              <div style={{ padding: "10px 0 20px", display: "flex", flexDirection: "column", gap: "12px" }} className="md:hidden">
+                {["home", "about", "skills", "projects", "education"].map((item) => (
                   <button
                     key={item}
-                    onClick={() => {
-                      scrollToSection(item);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`text-left px-4 py-2 rounded-lg font-medium capitalize transition-all ${
-                      activeSection === item
-                        ? `${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`
-                        : `${darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100'}`
-                    }`}
+                    onClick={() => { item === "home" ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection(item); setIsMobileMenuOpen(false); }}
+                    style={{ background: "none", border: "none", textAlign: "left", fontSize: "14px", fontWeight: 500, color: activeSection === item ? "#3b82f6" : (darkMode ? "#888" : "#666") }}
                   >
-                    {item}
+                    {item.charAt(0).toUpperCase() + item.slice(1)}
                   </button>
                 ))}
-
-                {/* Resume Button - Mobile */}
-                <div className="px-2">
-                  <p className={`text-xs font-semibold mb-2 ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>Resume</p>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      onClick={() => {
-                        handleDownloadResume('fullstack');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className={`text-left px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                        darkMode
-                          ? 'bg-blue-600/60 text-white hover:bg-blue-600'
-                          : 'bg-blue-600/60 text-white hover:bg-blue-600'
-                      }`}
+                <div style={{ height: "1px", background: darkMode ? "#222" : "#eee", margin: "5px 0" }} />
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  {["Fullstack", "Blockchain", "General"].map((lbl, idx) => (
+                    <button 
+                      key={lbl} 
+                      onClick={() => handleDownloadResume(["fullstack", "blockchain", "both"][idx] as any)}
+                      style={{ fontSize: "11px", color: "#3b82f6", background: darkMode ? "#1a2233" : "#f0f7ff", border: "none", padding: "4px 10px", borderRadius: "4px" }}
                     >
-                      Full Stack
+                      {lbl}
                     </button>
-                    <button
-                      onClick={() => {
-                        handleDownloadResume('blockchain');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className={`text-left px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                        darkMode
-                          ? 'bg-blue-600/60 text-white hover:bg-blue-600'
-                          : 'bg-blue-600/60 text-white hover:bg-blue-600'
-                      }`}
-                    >
-                      Blockchain
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleDownloadResume('both');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className={`text-left px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                        darkMode
-                          ? 'bg-blue-600/60 text-white hover:bg-blue-600'
-                          : 'bg-blue-600/60 text-white hover:bg-blue-600'
-                      }`}
-                    >
-                      Software Developer
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </nav>
-      </header>
-
-      {/* Hero/Home Section */}
-      <section id="home" className="pt-20 md:pt-32 pb-24 md:pb-32 px-4 md:px-6 min-h-screen flex items-center">
-        <div className="container mx-auto max-w-5xl w-full">
-          <div className="text-center mb-8 md:mb-12">
-            <div className="relative w-40 md:w-48 lg:w-56 h-40 md:h-48 lg:h-56 mx-auto mb-6">
-              <img 
-                src={profile.image} 
-                alt={profile.name}
-                className="w-full h-full rounded-full object-cover border-4 border-blue-500/20 shadow-lg shadow-blue-500/20"
-                loading="lazy"
-                decoding="async"
-                width={224}
-                height={224}
-              />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-transparent opacity-0 hover:opacity-20 transition-opacity duration-300" />
-            </div>
-            <div className={`inline-block px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-medium mb-4 md:mb-6 ${accentBg} ${accentColor}`}>
-              Available for opportunities
-            </div>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4">
-              {profile.name}
-            </h2>
-            <p className={`text-lg md:text-2xl lg:text-3xl mb-3 md:mb-4 ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
-              {profile.title}
-            </p>
-            <p className={`text-sm md:text-base lg:text-lg max-w-2xl mx-auto mb-6 md:mb-8 px-2 ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-              {profile.tagline}
-            </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-2 md:gap-3 mb-6 md:mb-8 text-xs md:text-sm">
-              <Mail className={`w-4 md:w-5 h-4 md:h-5 ${darkMode ? 'text-slate-400' : 'text-gray-500'}`} />
-              <a href={`mailto:${profile.email}`} className={`${accentColor} hover:underline break-all`}>
-                {profile.email}
-              </a>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4 mb-6 md:mb-8 flex-wrap">
-              <button
-                onClick={() => handleDownloadResume('both')}
-                className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium transition text-sm md:text-base ${darkMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'} text-white flex-1 sm:flex-none min-w-[160px]`}
-              >
-                <Download className="w-4 h-4" />
-                <span>Resume</span>
-              </button>
-              <a 
-                href={`mailto:${profile.email}`}
-                className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium border-2 transition text-sm md:text-base flex-1 sm:flex-none min-w-[160px] ${darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-gray-300 hover:border-gray-400'}`}
-              >
-                <Mail className="w-4 h-4" />
-                <span>Contact</span>
-              </a>
-            </div>
-
-            <div className="flex justify-center gap-3 md:gap-4">
-              <a href={profile.github} target="_blank" rel="noopener noreferrer" className={`p-2 md:p-3 rounded-lg transition ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-200'}`}>
-                <Github className="w-5 md:w-6 h-5 md:h-6" />
-              </a>
-              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={`p-2 md:p-3 rounded-lg transition ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-200'}`}>
-                <Linkedin className="w-5 md:w-6 h-5 md:h-6" />
-              </a>
-              <a href={profile.twitter} target="_blank" rel="noopener noreferrer" className={`p-2 md:p-3 rounded-lg transition ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-200'}`}>
-                <TwitterIcon className="w-5 md:w-6 h-5 md:h-6" />
-              </a>
-            </div>
-          </div>
-
-          <div className="flex justify-center animate-bounce">
-            <ChevronDown className={`w-5 md:w-6 h-5 md:h-6 ${darkMode ? 'text-slate-600' : 'text-gray-400'}`} />
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 md:px-6 pb-16 md:pb-20 max-w-5xl space-y-12 md:space-y-20">
-        {/* About Section */}
-        <section id="about" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">About Me</h3>
-          <div className={`p-4 md:p-6 lg:p-8 rounded-2xl border transition-colors ${cardBg}`}>
-            <p className={`text-sm md:text-base lg:text-lg leading-relaxed ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
-              {profile.bio}
-            </p>
-          </div>
-        </section>
-
-        {/* Skills Section */}
-        <section id="skills" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Technical Skills</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
-            {skills.map((skillGroup, idx) => (
-              <div key={idx} className={`p-4 md:p-6 rounded-2xl border transition-colors ${cardBg}`}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`${accentColor}`}>{skillGroup.icon}</div>
-                  <h4 className="text-base md:text-lg font-semibold">{skillGroup.category}</h4>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {skillGroup.items.map((skill, i) => (
-                    <span 
-                      key={i} 
-                      className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm transition-colors ${darkMode ? 'bg-slate-800 text-slate-300' : 'bg-gray-100 text-gray-700'}`}
-                    >
-                      {skill}
-                    </span>
                   ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            )}
+          </nav>
+        </header>
 
-        {/* Projects Section */}
-        <section id="projects" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Featured Projects</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            {projects.map((project, idx) => (
-              <div 
-                key={idx} 
-                onClick={() => setSelectedProject(project)}
-                className={`p-4 md:p-6 rounded-2xl border transition-all cursor-pointer ${cardBg} hover:shadow-xl hover:scale-100 md:hover:scale-105 active:scale-95`}
-              >
-                <div className={`relative mb-3 overflow-hidden rounded-xl border ${darkMode ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-gray-50'}`}>
-                  <div className="aspect-video w-full">
-                    <img
-                      alt={`${project.title} preview`}
-                      className="h-full w-full object-cover transition duration-300 ease-out"
-                      loading="lazy"
-                      src={project.image}
-                    />
-                  </div>
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
+        {/* ═══════════════ HERO / HOME SECTION ═══════════════ */}
+        <section
+          id="home"
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+            paddingTop: 'clamp(96px, 12vh, 128px)',
+            paddingBottom: 'clamp(48px, 8vh, 80px)',
+          }}
+        >
+          {/* Ambient background blobs */}
+          <div style={{
+            position: 'absolute', top: '-10%', right: '-5%',
+            width: '600px', height: '600px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
+            filter: 'blur(60px)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '-10%', left: '-5%',
+            width: '500px', height: '500px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 70%)',
+            filter: 'blur(60px)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }} />
+
+          <div className="container mx-auto px-6 max-w-6xl" style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '64px',
+              alignItems: 'center',
+            }}>
+
+              {/* ── Left: Text Content ── */}
+              <div>
+                {/* Status badge */}
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '6px 16px',
+                  borderRadius: '999px',
+                  marginBottom: '28px',
+                  border: darkMode ? '1px solid rgba(59,130,246,0.35)' : '1px solid rgba(59,130,246,0.3)',
+                  background: darkMode ? 'rgba(59,130,246,0.10)' : 'rgba(59,130,246,0.06)',
+                }}>
+                  <span style={{
+                    width: '8px', height: '8px', borderRadius: '50%',
+                    background: '#22c55e',
+                    boxShadow: '0 0 8px rgba(34,197,94,0.7)',
+                    animation: 'pulse 2s infinite',
+                  }} />
+                  <span style={{
+                    fontSize: '13px', fontWeight: 600,
+                    color: darkMode ? '#93c5fd' : '#2563eb',
+                    letterSpacing: '0.02em',
+                  }}>
+                    Available for opportunities
+                  </span>
                 </div>
-                <h4 className="text-lg md:text-xl font-semibold mb-2">{project.title}</h4>
-                <p className={`text-xs md:text-sm mb-4 ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
-                  {project.description}
+
+                {/* Name */}
+                <h1 style={{
+                  fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
+                  fontWeight: 800,
+                  lineHeight: 1.1,
+                  marginBottom: '16px',
+                  color: darkMode ? '#f1f5f9' : '#0f172a',
+                  letterSpacing: '-0.02em',
+                }}>
+                  {' '}
+                  <span style={{
+                    color: '#3b82f6',
+                  }}>
+                    {profile.name}
+                  </span>
+                </h1>
+
+                {/* Title */}
+                <p style={{
+                  fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+                  fontWeight: 600,
+                  marginBottom: '20px',
+                  color: darkMode ? '#94a3b8' : '#475569',
+                }}>
+                  {profile.title}
                 </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tech.slice(0, 3).map((tech, i) => (
-                    <span 
-                      key={i} 
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${accentBg} ${accentColor}`}
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                  {project.tech.length > 3 && (
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${accentBg} ${accentColor}`}>
-                      +{project.tech.length - 3} more
-                    </span>
-                  )}
-                </div>
-                <p className={`text-xs ${accentColor}`}>Click to view details →</p>
-              </div>
-            ))}
-          </div>
-        </section>
 
-        {/* Education Section */}
-        <section id="education" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Education</h3>
-          <div className="space-y-6">
-            {education.map((edu, idx) => (
-              <div
-                key={idx}
-                className={`p-4 md:p-6 lg:p-8 rounded-2xl border transition-all ${cardBg} hover:shadow-lg`}
+                {/* Divider */}
+                <div style={{
+                  width: '60px', height: '3px',
+                  borderRadius: '99px',
+                  background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                  marginBottom: '24px',
+                }} />
+
+                {/* Animated roles + tech stack */}
+                <HeroHighlights darkMode={darkMode} />
+
+                {/* CTA buttons */}
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '36px' }}>
+                  <button
+                    onClick={() => handleDownloadResume('both')}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '8px',
+                      padding: '13px 28px',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: '0.95rem',
+                      border: 'none',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 20px rgba(59,130,246,0.4)',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
+                      (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 28px rgba(59,130,246,0.5)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
+                      (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(59,130,246,0.4)';
+                    }}
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Resume
+                  </button>
+
+                  <a
+                    href={`mailto:${profile.email}`}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '8px',
+                      padding: '13px 28px',
+                      borderRadius: '10px',
+                      border: darkMode ? '1.5px solid rgba(148,163,184,0.3)' : '1.5px solid rgba(71,85,105,0.25)',
+                      color: darkMode ? '#e2e8f0' : '#1e293b',
+                      fontWeight: 600,
+                      fontSize: '0.95rem',
+                      textDecoration: 'none',
+                      background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                      backdropFilter: 'blur(8px)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s, border-color 0.2s, background 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)';
+                      (e.currentTarget as HTMLAnchorElement).style.borderColor = '#3b82f6';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
+                      (e.currentTarget as HTMLAnchorElement).style.borderColor = darkMode ? 'rgba(148,163,184,0.3)' : 'rgba(71,85,105,0.25)';
+                    }}
+                  >
+                    <Mail className="w-4 h-4" />
+                    Get In Touch
+                  </a>
+                </div>
+
+                {/* Social links */}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  {[
+                    { href: profile.github, icon: <Github className="w-5 h-5" />, label: 'GitHub' },
+                    { href: profile.linkedin, icon: <Linkedin className="w-5 h-5" />, label: 'LinkedIn' },
+                    { href: profile.twitter, icon: <TwitterIcon className="w-5 h-5" />, label: 'Twitter' },
+                    { href: `mailto:${profile.email}`, icon: <Mail className="w-5 h-5" />, label: 'Email' },
+                  ].map(({ href, icon, label }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target={href.startsWith('http') ? '_blank' : undefined}
+                      rel="noopener noreferrer"
+                      title={label}
+                      style={{
+                        width: '44px', height: '44px',
+                        borderRadius: '10px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(71,85,105,0.15)',
+                        background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                        color: darkMode ? '#94a3b8' : '#475569',
+                        textDecoration: 'none',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={e => {
+                        const el = e.currentTarget as HTMLAnchorElement;
+                        el.style.background = 'rgba(59,130,246,0.15)';
+                        el.style.borderColor = 'rgba(59,130,246,0.5)';
+                        el.style.color = '#3b82f6';
+                        el.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseLeave={e => {
+                        const el = e.currentTarget as HTMLAnchorElement;
+                        el.style.background = darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
+                        el.style.borderColor = darkMode ? 'rgba(148,163,184,0.15)' : 'rgba(71,85,105,0.15)';
+                        el.style.color = darkMode ? '#94a3b8' : '#475569';
+                        el.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      {icon}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Right: Profile Photo ── */}
+              <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
+                {/* Outer glow ring */}
+                <div style={{
+                  position: 'absolute',
+                  width: '320px', height: '320px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(59,130,246,0.20) 0%, transparent 70%)',
+                  filter: 'blur(20px)',
+                  animation: 'slowPulse 4s ease-in-out infinite',
+                }} />
+
+                {/* Photo card */}
+                <div style={{
+                  position: 'relative',
+                  width: '260px', height: '260px',
+                  borderRadius: '50%',
+                  padding: '4px',
+                  background: 'linear-gradient(135deg, #3b82f6, #8b5cf6, #3b82f6)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradientMove 4s ease infinite',
+                  boxShadow: darkMode
+                    ? '0 0 40px rgba(59,130,246,0.30), 0 20px 60px rgba(0,0,0,0.40)'
+                    : '0 0 40px rgba(59,130,246,0.20), 0 20px 60px rgba(0,0,0,0.12)',
+                }}>
+                  <img
+                    src={profile.image}
+                    alt={profile.name}
+                    style={{
+                      width: '100%', height: '100%',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: darkMode ? '4px solid #0f172a' : '4px solid #ffffff',
+                    }}
+                    loading="eager"
+                  />
+                </div>
+
+                {/* Floating badge — projects */}
+                <div style={{
+                  position: 'absolute',
+                  top: '10px', right: '-10px',
+                  padding: '10px 16px',
+                  borderRadius: '12px',
+                  background: darkMode ? 'rgba(15,23,42,0.90)' : 'rgba(255,255,255,0.92)',
+                  border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(203,213,225,0.8)',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                  textAlign: 'center',
+                  minWidth: '90px',
+                }}>
+                  <p style={{
+                    fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
+                    background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}>6+</p>
+                  <p style={{ fontSize: '11px', color: darkMode ? '#94a3b8' : '#64748b', fontWeight: 600, marginTop: '2px' }}>Projects</p>
+                </div>
+
+                {/* Floating badge — experience */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: '10px', left: '-10px',
+                  padding: '10px 16px',
+                  borderRadius: '12px',
+                  background: darkMode ? 'rgba(15,23,42,0.90)' : 'rgba(255,255,255,0.92)',
+                  border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(203,213,225,0.8)',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                  textAlign: 'center',
+                  minWidth: '90px',
+                }}>
+                  <p style={{
+                    fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
+                    background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}>Web3</p>
+                  <p style={{ fontSize: '11px', color: darkMode ? '#94a3b8' : '#64748b', fontWeight: 600, marginTop: '2px' }}>Developer</p>
+                </div>
+
+                {/* Floating badge — tech stack */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-10px', right: '10px',
+                  padding: '10px 16px',
+                  borderRadius: '12px',
+                  background: darkMode ? 'rgba(15,23,42,0.90)' : 'rgba(255,255,255,0.92)',
+                  border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(203,213,225,0.8)',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                  textAlign: 'center',
+                  minWidth: '90px',
+                }}>
+                  <p style={{
+                    fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}>DeFi</p>
+                  <p style={{ fontSize: '11px', color: darkMode ? '#94a3b8' : '#64748b', fontWeight: 600, marginTop: '2px' }}>Builder</p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Scroll cue */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '80px' }}>
+              <button
+                onClick={() => scrollToSection('about')}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: darkMode ? '#475569' : '#94a3b8',
+                  animation: 'bounce 2s infinite',
+                }}
               >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-4">
-                  <div>
-                    <h4 className="text-lg md:text-xl lg:text-2xl font-semibold mb-1">{edu.institution}</h4>
-                    <p className={`text-sm md:text-base font-medium ${accentColor}`}>{edu.degree} in {edu.field}</p>
-                    <p className={`text-xs md:text-sm ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>{edu.year}</p>
+                <span style={{ fontSize: '12px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Scroll</span>
+                <ChevronDown className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Keyframe animations */}
+          <style>{`
+          @keyframes slowPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+          }
+          @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+          }
+        `}</style>
+        </section>
+        {/* ══════════════════════════════════════════════════════ */}
+
+        {/* Main Content */}
+        <main className="container mx-auto px-4 md:px-6 pb-16 md:pb-20 max-w-5xl space-y-12 md:space-y-20">
+          {/* About Section */}
+          <section id="about" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">About Me</h3>
+            <div className={`p-4 md:p-6 lg:p-8 rounded-2xl border transition-colors ${cardBg}`}>
+              <p className={`text-sm md:text-base lg:text-lg leading-relaxed ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
+                {profile.bio}
+              </p>
+            </div>
+          </section>
+
+          {/* Skills Section */}
+          <section id="skills" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Technical Skills</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
+              {skills.map((skillGroup, idx) => (
+                <div key={idx} className={`p-4 md:p-6 rounded-2xl border transition-colors ${cardBg}`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`${accentColor}`}>{skillGroup.icon}</div>
+                    <h4 className="text-base md:text-lg font-semibold">{skillGroup.category}</h4>
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-sm font-semibold ${accentBg} ${accentColor} w-fit`}>
-                    GPA: {edu.gpa}
+                  <div className="flex flex-wrap gap-2">
+                    {skillGroup.items.map((skill, i) => (
+                      <span
+                        key={i}
+                        className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm transition-colors ${darkMode ? 'bg-slate-800 text-slate-300' : 'bg-gray-100 text-gray-700'}`}
+                      >
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 </div>
-                {/* <div>
+              ))}
+            </div>
+          </section>
+
+          {/* Projects Section */}
+          <section id="projects" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Featured Projects</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              {projects.map((project, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setSelectedProject(project)}
+                  className={`p-4 md:p-6 rounded-2xl border transition-all cursor-pointer ${cardBg} hover:shadow-xl hover:scale-100 md:hover:scale-105 active:scale-95`}
+                >
+                  <div className={`relative mb-3 overflow-hidden rounded-xl border ${darkMode ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-gray-50'}`}>
+                    <div className="aspect-video w-full">
+                      <img
+                        alt={`${project.title} preview`}
+                        className="h-full w-full object-cover transition duration-300 ease-out"
+                        loading="lazy"
+                        src={project.image}
+                      />
+                    </div>
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
+                  </div>
+                  <h4 className="text-lg md:text-xl font-semibold mb-2">{project.title}</h4>
+                  <p className={`text-xs md:text-sm mb-4 ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.tech.slice(0, 3).map((tech, i) => (
+                      <span
+                        key={i}
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${accentBg} ${accentColor}`}
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {project.tech.length > 3 && (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${accentBg} ${accentColor}`}>
+                        +{project.tech.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                  <p className={`text-xs ${accentColor}`}>Click to view details →</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Education Section */}
+          <section id="education" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Education</h3>
+            <div className="space-y-6">
+              {education.map((edu, idx) => (
+                <div
+                  key={idx}
+                  className={`p-4 md:p-6 lg:p-8 rounded-2xl border transition-all ${cardBg} hover:shadow-lg`}
+                >
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-4">
+                    <div>
+                      <h4 className="text-lg md:text-xl lg:text-2xl font-semibold mb-1">{edu.institution}</h4>
+                      <p className={`text-sm md:text-base font-medium ${accentColor}`}>{edu.degree} in {edu.field}</p>
+                      <p className={`text-xs md:text-sm ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>{edu.year}</p>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-sm font-semibold ${accentBg} ${accentColor} w-fit`}>
+                      GPA: {edu.gpa}
+                    </div>
+                  </div>
+                  {/* <div>
                   <h5 className="text-sm md:text-base font-semibold mb-3">Key Achievements</h5>
                   <ul className="space-y-2">
                     {edu.achievements.map((achievement, i) => (
@@ -790,45 +1090,45 @@ export default function Portfolio() {
                     ))}
                   </ul>
                 </div> */}
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-
-      {/* Project Detail Modal */}
-      {selectedProject && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-6"
-          onClick={() => setSelectedProject(null)}
-        >
-          <div 
-            className={`${modalBg} rounded-2xl max-w-3xl w-full max-h-[90vh] md:max-h-[95vh] overflow-y-auto border ${darkMode ? 'border-slate-800' : 'border-gray-200'}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 md:p-6 lg:p-8">
-              <div className="flex justify-between items-start mb-4 md:mb-6 gap-4">
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-2xl md:text-3xl font-bold mb-2 break-words">{selectedProject.title}</h3>
-                  <p className={`text-sm md:text-base ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
-                    {selectedProject.description}
-                  </p>
                 </div>
-                <button 
-                  onClick={() => setSelectedProject(null)}
-                  className={`flex-shrink-0 p-2 rounded-lg transition ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-200'}`}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              ))}
+            </div>
+          </section>
+        </main>
 
-              <div className="space-y-4 md:space-y-6">
-                {/* Website Preview with Browser Frame */}
-                <div>
-                  <h4 className="font-semibold mb-3 md:mb-4 text-base md:text-lg">Live Preview</h4>
-                  <div className={`rounded-2xl overflow-hidden transition-all ${darkMode ? 'bg-slate-900 shadow-2xl' : 'bg-white shadow-xl'}`}>
-                    {/* Browser Header */}
-                    {/* <div className={`flex items-center gap-3 px-4 py-3 border-b ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
+        {/* Project Detail Modal */}
+        {selectedProject && (
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-6"
+            onClick={() => setSelectedProject(null)}
+          >
+            <div
+              className={`${modalBg} rounded-2xl max-w-3xl w-full max-h-[90vh] md:max-h-[95vh] overflow-y-auto border ${darkMode ? 'border-slate-800' : 'border-gray-200'}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4 md:p-6 lg:p-8">
+                <div className="flex justify-between items-start mb-4 md:mb-6 gap-4">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-2 break-words">{selectedProject.title}</h3>
+                    <p className={`text-sm md:text-base ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+                      {selectedProject.description}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedProject(null)}
+                    className={`flex-shrink-0 p-2 rounded-lg transition ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-200'}`}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-4 md:space-y-6">
+                  {/* Website Preview with Browser Frame */}
+                  <div>
+                    <h4 className="font-semibold mb-3 md:mb-4 text-base md:text-lg">Live Preview</h4>
+                    <div className={`rounded-2xl overflow-hidden transition-all ${darkMode ? 'bg-slate-900 shadow-2xl' : 'bg-white shadow-xl'}`}>
+                      {/* Browser Header */}
+                      {/* <div className={`flex items-center gap-3 px-4 py-3 border-b ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
                       <div className="flex gap-2">
                         <div className={`w-3 h-3 rounded-full ${darkMode ? 'bg-red-500' : 'bg-red-400'}`} />
                         <div className={`w-3 h-3 rounded-full ${darkMode ? 'bg-yellow-500' : 'bg-yellow-400'}`} />
@@ -838,102 +1138,102 @@ export default function Portfolio() {
                         {selectedProject.liveLink}
                       </div>
                     </div> */}
-                    {/* Browser Content with Desktop Scale */}
-                    <div style={{ 
-                      height: '500px', 
-                      overflow: 'hidden',
-                      backgroundColor: darkMode ? '#1e293b' : '#f8fafc',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      justifyContent: 'center',
-                      padding: '0'
-                    }}>
+                      {/* Browser Content with Desktop Scale */}
                       <div style={{
-                        transform: 'scale(0.5)',
-                        transformOrigin: 'top center',
-                        width: '1380px',
-                        margin: '0',
+                        height: '500px',
+                        overflow: 'hidden',
+                        backgroundColor: darkMode ? '#1e293b' : '#f8fafc',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        justifyContent: 'center',
                         padding: '0'
                       }}>
-                        <iframe 
-                          src={selectedProject.liveLink} 
-                          title={selectedProject.title}
-                          className="border-0"
-                          style={{ 
-                            width: '1380px', 
-                            height: '1000px', 
-                            display: 'block',
-                            margin: '0',
-                            padding: '0'
-                          }}
-                          loading="lazy"
-                        />
+                        <div style={{
+                          transform: 'scale(0.5)',
+                          transformOrigin: 'top center',
+                          width: '1380px',
+                          margin: '0',
+                          padding: '0'
+                        }}>
+                          <iframe
+                            src={selectedProject.liveLink}
+                            title={selectedProject.title}
+                            className="border-0"
+                            style={{
+                              width: '1380px',
+                              height: '1000px',
+                              display: 'block',
+                              margin: '0',
+                              padding: '0'
+                            }}
+                            loading="lazy"
+                          />
+                        </div>
                       </div>
                     </div>
+
                   </div>
-                 
-                </div>
 
-                <div>
-                  <h4 className="font-semibold mb-2 md:mb-3 text-base md:text-lg">Key Features & Achievements</h4>
-                  <ul className="space-y-2">
-                    {selectedProject.details.map((detail, i) => (
-                      <li key={i} className={`flex gap-3 text-xs md:text-sm ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                        <span className={`${accentColor} mt-1 flex-shrink-0`}>•</span>
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-2 md:mb-3 text-base md:text-lg">Tech Stack</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.tech.map((tech, i) => (
-                      <span 
-                        key={i} 
-                        className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${accentBg} ${accentColor}`}
-                      >
-                        {tech}
-                      </span>
-                    ))}
+                  <div>
+                    <h4 className="font-semibold mb-2 md:mb-3 text-base md:text-lg">Key Features & Achievements</h4>
+                    <ul className="space-y-2">
+                      {selectedProject.details.map((detail, i) => (
+                        <li key={i} className={`flex gap-3 text-xs md:text-sm ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                          <span className={`${accentColor} mt-1 flex-shrink-0`}>•</span>
+                          <span>{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
 
-                <div className="flex flex-col md:flex-row gap-3 md:gap-4 pt-4 md:pt-6">
-                  <a 
-                    href={selectedProject.liveLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium transition text-sm md:text-base ${darkMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'} text-white flex-1`}
-                  >
-                    <Globe className="w-4 h-4" />
-                    <span>Live Demo</span>
-                  </a>
-                  <a 
-                    href={selectedProject.githubLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium border-2 transition text-sm md:text-base flex-1 ${darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-gray-300 hover:border-gray-400'}`}
-                  >
-                    <Github className="w-4 h-4" />
-                    <span>Source</span>
-                  </a>
+                  <div>
+                    <h4 className="font-semibold mb-2 md:mb-3 text-base md:text-lg">Tech Stack</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.tech.map((tech, i) => (
+                        <span
+                          key={i}
+                          className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${accentBg} ${accentColor}`}
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-3 md:gap-4 pt-4 md:pt-6">
+                    <a
+                      href={selectedProject.liveLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium transition text-sm md:text-base ${darkMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'} text-white flex-1`}
+                    >
+                      <Globe className="w-4 h-4" />
+                      <span>Live Demo</span>
+                    </a>
+                    <a
+                      href={selectedProject.githubLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium border-2 transition text-sm md:text-base flex-1 ${darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-gray-300 hover:border-gray-400'}`}
+                    >
+                      <Github className="w-4 h-4" />
+                      <span>Source</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Footer */}
-      <footer className={`border-t transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}`}>
-        <div className="container mx-auto px-4 md:px-6 py-6 md:py-8 text-center">
-          <p className={`text-xs md:text-sm ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-            © 2025 {profile.name}. Built with React.
-          </p>
-        </div>
-      </footer>
+        {/* Footer */}
+        <footer className={`border-t transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}`}>
+          <div className="container mx-auto px-4 md:px-6 py-6 md:py-8 text-center">
+            <p className={`text-xs md:text-sm ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+              © 2025 {profile.name}. Built with React.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
