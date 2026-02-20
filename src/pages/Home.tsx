@@ -57,24 +57,29 @@ export default function Portfolio() {
     github: "https://github.com/arpitSatpute",
     linkedin: "https://linkedin.com/in/arpitsatpute",
     twitter: "https://twitter.com/arpits_jsx",
-    bio: "I’m a Versatile engineer building Full-stack applications using Java Spring Boot while also developing Blockchain solutions with Solidity powered Smart Contracts. I enjoy working across both traditional backend architectures and decentralized systems, applying strong software engineering principles to create secure, scalable, and efficient technology solutions. I thrive in environments where I can design clean APIs, optimize system performance, and push innovation at the boundary of enterprise software and Web3."
+    bio: "Full Stack & Web3 Engineer specializing in Ethereum and Solana ecosystem development. I design and deploy production-grade smart contracts while building seamless frontend experiences with React and Web3 libraries. Passionate about creating secure, scalable DeFi protocols and decentralized applications that push the boundaries of blockchain innovation."
   };
 
   const skills = [
     { 
-      category: "Backend Development", 
-      icon: <Code2 className="w-5 h-5" />,
-      items: ["Java", "Spring Boot", "Spring MVC", "Hibernate", "REST APIs", "Microservices"] 
+      category: "Languages", 
+      icon: <Languages className="w-5 h-5" />,
+      items: ["Java", "Rust", "JavaScript", "TypeScript", "Solidity", "Python", "C++"] 
     },
     { 
       category: "Blockchain", 
       icon: <Blocks className="w-5 h-5" />,
-      items: ["Solidity", "Ethereum", "Smart Contracts", "Foundry", "Openzeppelin", "Hardhat"] 
+      items: ["Solana", "Ethereum", "Solidity", "Smart Contracts", "Foundry"] 
+    },
+    {
+      category: "Backend Development", 
+      icon: <Code2 className="w-5 h-5" />,
+      items: ["Spring Boot", "Spring MVC", "Hibernate", "REST APIs", "Microservices"] 
     },
     { 
       category: "Database", 
       icon: <Database className="w-5 h-5" />,
-      items: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "IPFS"]
+      items: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "IPFS"]
     },
     { 
       category: "Frontend Frameworks and Libraries", 
@@ -86,15 +91,27 @@ export default function Portfolio() {
       icon: <Settings className="w-5 h-5" />,
       items: ["Git", "Github", "Docker"] 
     },
-    { 
-      category: "Languages", 
-      icon: <Languages className="w-5 h-5" />,
-      items: ["Java", "JavaScript", "Python", "TypeScript", "Solidity", "C++"] 
-    },
+    
     
   ];
 
   const projects = [
+    {
+      title: "Aura-Farm",
+      description: "Personalized DeFi yield protocol leveraging soulbound Risk NFTs and AI-driven assessments to route user capital across tiered ERC-4626 vaults",
+      liveLink: "https://www.aura-farm.tech",
+      githubLink: "https://github.com/himanshu-dhandole/Aura-Farm.git",
+      image: "https://image2url.com/r2/default/images/1771578299622-78a3bfd2-34f1-4b80-81e6-a75e987fbd88.png",
+      tech: ["Solidity", "Foundry", "React", "Nitrolite Protocol", "Circle Gateway", "USDC"],
+      details: [
+        "Modular ERC-4626 vault architecture for composable DeFi integration and automated capital reallocation driven by on-chain NFT-encoded risk parameters",
+        "Soulbound Risk NFT system where users complete AI-generated risk assessments and receive non-transferable NFTs encoding unique allocations across three ERC-4626 vault tiers: Conservative, Balanced, and Aggressive",
+        "Personalized capital allocation driven by AI-powered risk classification, automatically routing deposits to optimal vault tiers matching user risk preferences",
+        "Circle Gateway integration enabling frictionless USDC deposits from Ethereum and Base, with native USDC minting on Arc and auto-routing to vaults based on the user's Risk NFT profile",
+        "Cross-chain rebalancing via Nitrolite Protocol achieving 90% lower gas costs compared to traditional cross-chain solutions",
+        "Real-time dashboard displaying live APY and P&L breakdowns per vault tier with dynamic rebalancing indicators",
+      ]
+    },
     {
       title: "VeriMint",
       description: "Decentralised E-Commerce NFT Marketplace for physical and virtual goods as encrypted ERC-1155 digital twins",
