@@ -1,190 +1,59 @@
-import { useState, useEffect } from 'react';
-import { Download, Github, Linkedin, Mail, Code2, Database, Blocks, ChevronDown, X, Globe, Menu, Sun, Moon, Settings, Languages } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import {
+  Github, Linkedin, Code2, Database, Blocks,
+  X, Globe, Settings, Languages,
+  Home as HomeIcon, Briefcase, Wrench, PenTool, ExternalLink,
+  Twitter, Send, Download
+} from 'lucide-react';
 import profileImage from "@/assets/profile.jpeg";
-import { TwitterIcon } from '@/components/icons';
 
 interface Project {
   title: string;
   description: string;
   liveLink: string;
-  githubLink: string;
+  githubLink?: string;
   image: string;
   tech: string[];
   details: string[];
 }
 
-
-// ── Hero Highlights: Typewriter + Tech Chips ──────────────────────────────
-const ROLES = [
-  'Full Stack Developer',
-  'Blockchain Engineer',
-  'Smart Contract Dev',
-  'DeFi Protocol Builder',
-  'Web3 Dev',
-];
-
-const TECH_CHIPS = [
-  { label: 'Ethereum', color: '#627eea' },
-  { label: 'Solana', color: '#9945ff' },
-  { label: 'Solidity', color: '#627eea' },
-  { label: 'Rust', color: '#f74c00' },
-  { label: 'React', color: '#3178c6' },
-  { label: 'Spring Boot', color: '#6db33f' },
-  { label: 'Node.js', color: '#68a063' },
-];
-
-function HeroHighlights({ darkMode }: { darkMode: boolean }) {
-  const [roleIdx, setRoleIdx] = useState(0);
-  const [displayed, setDisplayed] = useState('');
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    const fullText = ROLES[roleIdx];
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (!deleting && displayed.length < fullText.length) {
-      timeout = setTimeout(() => setDisplayed(fullText.slice(0, displayed.length + 1)), 60);
-    } else if (!deleting && displayed.length === fullText.length) {
-      timeout = setTimeout(() => setDeleting(true), 2000);
-    } else if (deleting && displayed.length > 0) {
-      timeout = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 35);
-    } else if (deleting && displayed.length === 0) {
-      setDeleting(false);
-      setRoleIdx((i) => (i + 1) % ROLES.length);
-    }
-    return () => clearTimeout(timeout);
-  }, [displayed, deleting, roleIdx]);
-
-  return (
-    <div style={{ marginBottom: '36px' }}>
-      {/* Typewriter role line */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '4px',
-        marginBottom: '24px',
-        minHeight: '36px',
-      }}>
-        <span style={{
-          fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
-          fontWeight: 600,
-          color: darkMode ? '#e2e8f0' : '#334155',
-        }}>
-          I build{' '}
-        </span>
-        <span style={{
-          fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
-          fontWeight: 700,
-          background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          minWidth: '220px',
-        }}>
-          {displayed}
-        </span>
-        {/* Blinking cursor */}
-        <span style={{
-          display: 'inline-block',
-          width: '2px',
-          height: '22px',
-          background: '#3b82f6',
-          borderRadius: '2px',
-          animation: 'blink 1s step-end infinite',
-          flexShrink: 0,
-        }} />
-        <style>{`@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }`}</style>
-      </div>
-
-      {/* Tech chip pills */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '8px',
-      }}>
-        {TECH_CHIPS.map(({ label, color }) => (
-          <span
-            key={label}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '5px 12px',
-              borderRadius: '999px',
-              fontSize: '12px',
-              fontWeight: 600,
-              letterSpacing: '0.02em',
-              border: `1px solid ${color}40`,
-              background: `${color}12`,
-              color: color,
-              cursor: 'default',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}
-            onMouseEnter={e => {
-              const el = e.currentTarget as HTMLSpanElement;
-              el.style.transform = 'translateY(-2px)';
-              el.style.boxShadow = `0 4px 12px ${color}40`;
-            }}
-            onMouseLeave={e => {
-              const el = e.currentTarget as HTMLSpanElement;
-              el.style.transform = '';
-              el.style.boxShadow = '';
-            }}
-          >
-            <span style={{
-              width: '6px', height: '6px',
-              borderRadius: '50%',
-              background: color,
-              flexShrink: 0,
-            }} />
-            {label}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-// ─────────────────────────────────────────────────────────────────────────────
+const styles = {
+  sectionTitle: "text-[clamp(3.5rem,8vw,6.5rem)] font-black leading-[0.8] tracking-tighter uppercase",
+  sectionTitleFaded: "text-[clamp(3.5rem,8vw,6.5rem)] font-black leading-[0.8] tracking-tighter uppercase text-white/10 -mt-2",
+  card: "bg-white/5 border border-white/5 rounded-[32px] p-8 hover:border-[#FF4D00]/30 transition-all duration-500 group",
+  iconContainer: "w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-[#FF4D00] mb-6 group-hover:scale-110 transition-transform duration-500",
+};
 
 export default function Portfolio() {
-  const [activeSection, setActiveSection] = useState('about');
-  const [darkMode, setDarkMode] = useState(true);
+  const [activeSection, setActiveSection] = useState('home');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
 
-  // Handle scroll effect and section detection
   useEffect(() => {
+    const mainElement = mainRef.current;
+    if (!mainElement) return;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-
-      // If at the top, set to 'home'
-      if (window.scrollY < 100) {
-        setActiveSection('home');
-        return;
-      }
-
-      // Detect which section is in view
-      const sections = ['about', 'skills', 'projects', 'education'];
-      for (const section of sections) {
+      const sections = ['home', 'skills', 'projects', 'education'];
+      const current = sections.find(section => {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          if (rect.top <= 150 && rect.bottom >= 150) {
-            setActiveSection(section);
-            break;
-          }
+          return rect.top <= 300 && rect.bottom >= 300;
         }
-      }
+        return false;
+      });
+      if (current) setActiveSection(current);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    mainElement.addEventListener('scroll', handleScroll);
+    return () => mainElement.removeEventListener('scroll', handleScroll);
   }, []);
 
   const profile = {
     name: "Arpit Satpute",
     title: "Blockchain Developer",
-    tagline: "Building scalable applications and decentralized solutions",
+    tagline: "BUILDING THE FUTURE OF DECENTRALIZED FINANCE",
     email: "arpitrameshsatpute6986@gmail.com",
     image: profileImage,
     github: "https://github.com/arpitSatpute",
@@ -205,7 +74,7 @@ export default function Portfolio() {
       items: ["Solana", "Ethereum", "Solidity", "Smart Contracts", "Foundry"]
     },
     {
-      category: "Backend Development",
+      category: "Platforms",
       icon: <Code2 className="w-5 h-5" />,
       items: ["Spring Boot", "Spring MVC", "Hibernate", "REST APIs", "Microservices"]
     },
@@ -215,17 +84,15 @@ export default function Portfolio() {
       items: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "IPFS"]
     },
     {
-      category: "Frontend Frameworks and Libraries",
+      category: "Frontend",
       icon: <Code2 className="w-5 h-5" />,
-      items: ["React", "JavaScript", "React Native", "Wagmi", "Viem", "Tailwind CSS", "Bootstrap", "Hero Ui"]
+      items: ["React", "React Native", "Wagmi", "Viem", "Tailwind CSS", "Hero UI"]
     },
     {
       category: "Tools",
       icon: <Settings className="w-5 h-5" />,
       items: ["Git", "Github", "Docker"]
     },
-
-
   ];
 
   const projects = [
@@ -355,7 +222,7 @@ export default function Portfolio() {
     {
       institution: "Bhalerao Jr. Science College, Saoner",
       degree: "HSC",
-      field: "Physics, Chemistry, Mathematics, Biology",
+      field: "",
       year: "2020 - 2022",
       gpa: "76.83 %",
 
@@ -363,878 +230,472 @@ export default function Portfolio() {
     {
       institution: "Vidya Niketan Higher Secondary School, Urjanagar",
       degree: "SSC",
-      field: "SSC",
+      field: "",
       year: "2019 - 2020",
       gpa: "92.00 %",
 
     }
   ];
 
-  const handleDownloadResume = (type: 'fullstack' | 'blockchain' | 'both' = 'both') => {
-    // Map resume types to file names in assets
-    const resumeFiles: Record<string, string> = {
-      'fullstack': 'Arpit_Satpute_Full_Stack_Java_Developer.pdf',
-      'blockchain': 'Arpit_Satpute_Blockchain_Developer.pdf',
-      'both': 'Arpit_Satpute_Software_Developer.pdf'
-    };
-
-    const fileName = resumeFiles[type];
-    // Use /assets/ path for Vercel deployment with cache-busting to avoid stale PDFs
-    const cacheBust = 'v=20251219';
-    const resumePath = `/assets/${fileName}?${cacheBust}`;
-
-    // Fetch and download the file to ensure proper handling
-    fetch(resumePath)
-      .then(response => {
-        if (!response.ok) throw new Error('File not found');
-        return response.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch(error => {
-        console.error('Download failed:', error);
-        // Fallback: open the file in a new tab so the user can view it
-        try {
-          window.open(resumePath, '_blank');
-        } catch (e) {
-          alert('Failed to download resume. Please try again.');
-        }
-      });
+  const handleDownloadResume = () => {
+    const resumePath = "/assets/Arpit_Satpute_Blockchain_Developer.pdf";
+    const link = document.createElement("a");
+    link.href = resumePath;
+    link.setAttribute("download", "Arpit_Satpute_Blockchain_Developer.pdf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const scrollToSection = (section: string) => {
     setActiveSection(section);
-    document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' });
+    const element = document.getElementById(section);
+    if (element && mainRef.current) {
+      const top = element.offsetTop;
+      mainRef.current.scrollTo({
+        top: top - 48,
+        behavior: 'smooth'
+      });
+    }
   };
 
-  const bgClass = darkMode
-    ? 'bg-slate-950 text-white'
-    : 'bg-gray-50 text-gray-900';
-
-  const cardBg = darkMode
-    ? 'bg-slate-900 border-slate-800'
-    : 'bg-white border-gray-200';
-
-  const accentColor = darkMode ? 'text-blue-400' : 'text-blue-600';
-  const accentBg = darkMode ? 'bg-blue-500/10' : 'bg-blue-50';
-  const modalBg = darkMode ? 'bg-slate-900' : 'bg-white';
-
   return (
-
-    <div className={`min-h-screen transition-colors duration-300 ${bgClass} relative overflow-hidden`}>
-      {/* Subtle Background Elements */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* Gradient orbs */}
-        <div className={`absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-20 ${darkMode ? 'bg-blue-500' : 'bg-blue-300'}`} />
-        <div className={`absolute bottom-0 left-0 w-96 h-96 rounded-full blur-3xl opacity-20 ${darkMode ? 'bg-purple-500' : 'bg-purple-300'}`} />
-
-        {/* Additional orbs for light theme */}
-        {!darkMode && (
-          <>
-            <div className="absolute top-1/2 left-1/4 w-72 h-72 rounded-full blur-3xl opacity-15 bg-cyan-300" />
-            <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-10 bg-pink-300" />
-          </>
-        )}
-
-        {/* Grid pattern */}
-        <div className={`absolute inset-0 ${darkMode ? 'bg-slate-900/30' : 'bg-white/40'}`}
-          style={{
-            backgroundImage: `linear-gradient(${darkMode ? 'rgba(148, 163, 184, 0.05)' : 'rgba(71, 85, 105, 0.04)'} 1px, transparent 1px), linear-gradient(90deg, ${darkMode ? 'rgba(148, 163, 184, 0.05)' : 'rgba(71, 85, 105, 0.04)'} 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
-          }}
-        />
-
-        {/* Radial gradient overlay for light theme */}
-        {!darkMode && (
-          <>
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(191, 219, 254, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(243, 232, 255, 0.15) 0%, transparent 50%)'
-            }} />
-
-            {/* Subtle accent lines */}
-            <div className="absolute top-1/4 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-blue-200/20 to-transparent" />
-            <div className="absolute bottom-1/3 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-200/20 to-transparent" />
-
-            {/* Corner accents */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100/20 to-transparent rounded-full blur-2xl" />
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-purple-100/20 to-transparent rounded-full blur-2xl" />
-
-            {/* Center glow */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-white/30 to-transparent rounded-full blur-3xl" />
-          </>
-        )}
+    <div className={`min-h-screen bg-[#151312] font-['Poppins'] selection:bg-[#FF4D00] selection:text-white transition-colors duration-500 overflow-x-hidden text-white`}>
+      {/* Background Gradient Orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#FF4D00] opacity-[0.03] blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[#CCFF00] opacity-[0.02] blur-[100px]" />
       </div>
 
-      {/* Content wrapper with relative positioning */}
-      <div className="relative z-10">
-        {/* ═══════════════ MINIMAL HEADER ═══════════════ */}
-        <header
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 100,
-            transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-            background: isScrolled
-              ? darkMode ? "rgba(10, 10, 15, 0.7)" : "rgba(255, 255, 255, 0.7)"
-              : "transparent",
-            backdropFilter: isScrolled ? "blur(12px) saturate(160%)" : "none",
-            WebkitBackdropFilter: isScrolled ? "blur(12px) saturate(160%)" : "none",
-            borderBottom: isScrolled ? (darkMode ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)") : "1px solid transparent",
-          }}
-        >
-          <nav style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 20px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "56px" }}>
-              
-              {/* Brand */}
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: "8px" }}
-              >
-                <div style={{ fontWeight: 800, fontSize: "18px", color: darkMode ? "#fff" : "#000", letterSpacing: "-1px" }}>
-                  AS<span style={{ color: "#3b82f6" }}>.</span>
-                </div>
-              </button>
+      <div className="max-w-[1440px] mx-auto lg:h-screen lg:overflow-hidden relative z-10">
+        <div className="flex flex-col lg:flex-row lg:h-full lg:gap-0">
 
-              {/* Desktop Menu */}
-              <div className="hidden md:flex" style={{ alignItems: "center", gap: "24px" }}>
-                {[
-                  { name: "home", label: "Home" },
-                  { name: "about", label: "About" },
-                  { name: "skills", label: "Skills" },
-                  { name: "projects", label: "Projects" },
-                  { name: "education", label: "Education" },
-                ].map((item) => {
-                  const isAtTop = typeof window !== "undefined" && window.scrollY < 100;
-                  const isActive = item.name === "home" ? isAtTop : activeSection === item.name;
-                  return (
-                    <button
-                      key={item.name}
-                      onClick={() => item.name === "home" ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection(item.name)}
-                      style={{
-                        background: "none", border: "none", cursor: "pointer", padding: "4px 0",
-                        fontSize: "13px", fontWeight: 500,
-                        color: isActive ? (darkMode ? "#fff" : "#000") : (darkMode ? "#888" : "#666"),
-                        transition: "color 0.2s ease",
-                        position: "relative",
-                      }}
-                    >
-                      {item.label}
-                      {isActive && <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "1.5px", background: "#3b82f6", borderRadius: "10px" }} />}
-                    </button>
-                  );
-                })}
-              </div>
+          {/* ── LEFT SIDEBAR ── */}
+          <aside className="lg:w-[420px] lg:flex-shrink-0 lg:h-full lg:flex lg:flex-col lg:justify-center p-6 md:p-8 lg:p-10">
+            <div className="bg-[#FAFAFA] rounded-[40px] shadow-2xl text-[#151312] p-10 py-16 flex flex-col items-center text-center relative overflow-hidden">
+              {/* Decorative Dashed Path */}
+              <svg className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" viewBox="0 0 200 400">
+                <path d="M-20,40 Q60,60 80,140 T180,220" fill="none" stroke="#FF4D00" strokeWidth="2" strokeDasharray="6,6" />
+                <path d="M220,300 Q140,320 120,380 T20,440" fill="none" stroke="#FF4D00" strokeWidth="2" strokeDasharray="6,6" />
+              </svg>
 
-              {/* Actions */}
-              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                <button
-                  onClick={() => setDarkMode(!darkMode)}
-                  style={{ background: "none", border: "none", cursor: "pointer", color: darkMode ? "#888" : "#666", display: "flex", padding: 0 }}
-                >
-                  {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                </button>
-
-                {/* Resume minimal dropdown */}
-                <div className="relative group hidden sm:block">
-                  <button style={{ 
-                    background: "none", border: "none", cursor: "pointer", padding: 0, 
-                    fontSize: "13px", fontWeight: 600, color: "#3b82f6", display: "flex", alignItems: "center", gap: "4px" 
-                  }}>
-                    Resume <ChevronDown size={14} />
-                  </button>
-                  <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                    <div style={{ 
-                      background: darkMode ? "#111" : "#fff", border: "1px solid " + (darkMode ? "#222" : "#eee"), 
-                      borderRadius: "8px", overflow: "hidden", minWidth: "160px", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" 
-                    }}>
-                      {[
-                        { key: "fullstack", label: "Full Stack" },
-                        { key: "blockchain", label: "Blockchain" },
-                        { key: "both", label: "General" }
-                      ].map((r) => (
-                        <button 
-                          key={r.key} 
-                          onClick={() => handleDownloadResume(r.key as any)}
-                          style={{ 
-                            width: "100%", textAlign: "left", padding: "10px 16px", border: "none", background: "none", 
-                            fontSize: "12px", color: darkMode ? "#ccc" : "#444", cursor: "pointer", transition: "background 0.2s" 
-                          }}
-                          onMouseEnter={e => e.currentTarget.style.background = darkMode ? "#222" : "#f5f5f5"}
-                          onMouseLeave={e => e.currentTarget.style.background = "none"}
-                        >
-                          {r.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="md:hidden"
-                  style={{ background: "none", border: "none", cursor: "pointer", color: darkMode ? "#fff" : "#000", padding: 0 }}
-                >
-                  {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Mobile Drawer */}
-            {isMobileMenuOpen && (
-              <div style={{ padding: "10px 0 20px", display: "flex", flexDirection: "column", gap: "12px" }} className="md:hidden">
-                {["home", "about", "skills", "projects", "education"].map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => { item === "home" ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection(item); setIsMobileMenuOpen(false); }}
-                    style={{ background: "none", border: "none", textAlign: "left", fontSize: "14px", fontWeight: 500, color: activeSection === item ? "#3b82f6" : (darkMode ? "#888" : "#666") }}
-                  >
-                    {item.charAt(0).toUpperCase() + item.slice(1)}
-                  </button>
-                ))}
-                <div style={{ height: "1px", background: darkMode ? "#222" : "#eee", margin: "5px 0" }} />
-                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                  {["Fullstack", "Blockchain", "General"].map((lbl, idx) => (
-                    <button 
-                      key={lbl} 
-                      onClick={() => handleDownloadResume(["fullstack", "blockchain", "both"][idx] as any)}
-                      style={{ fontSize: "11px", color: "#3b82f6", background: darkMode ? "#1a2233" : "#f0f7ff", border: "none", padding: "4px 10px", borderRadius: "4px" }}
-                    >
-                      {lbl}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </nav>
-        </header>
-
-        {/* ═══════════════ HERO / HOME SECTION ═══════════════ */}
-        <section
-          id="home"
-          style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            position: 'relative',
-            overflow: 'hidden',
-            paddingTop: 'clamp(96px, 12vh, 128px)',
-            paddingBottom: 'clamp(48px, 8vh, 80px)',
-          }}
-        >
-          {/* Ambient background blobs */}
-          <div style={{
-            position: 'absolute', top: '-10%', right: '-5%',
-            width: '600px', height: '600px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
-            filter: 'blur(60px)',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }} />
-          <div style={{
-            position: 'absolute', bottom: '-10%', left: '-5%',
-            width: '500px', height: '500px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 70%)',
-            filter: 'blur(60px)',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }} />
-
-          <div className="container mx-auto px-6 max-w-6xl" style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '64px',
-              alignItems: 'center',
-            }}>
-
-              {/* ── Left: Text Content ── */}
-              <div>
-                {/* Status badge */}
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '6px 16px',
-                  borderRadius: '999px',
-                  marginBottom: '28px',
-                  border: darkMode ? '1px solid rgba(59,130,246,0.35)' : '1px solid rgba(59,130,246,0.3)',
-                  background: darkMode ? 'rgba(59,130,246,0.10)' : 'rgba(59,130,246,0.06)',
-                }}>
-                  <span style={{
-                    width: '8px', height: '8px', borderRadius: '50%',
-                    background: '#22c55e',
-                    boxShadow: '0 0 8px rgba(34,197,94,0.7)',
-                    animation: 'pulse 2s infinite',
-                  }} />
-                  <span style={{
-                    fontSize: '13px', fontWeight: 600,
-                    color: darkMode ? '#93c5fd' : '#2563eb',
-                    letterSpacing: '0.02em',
-                  }}>
-                    Available for opportunities
-                  </span>
-                </div>
-
-                {/* Name */}
-                <h1 style={{
-                  fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
-                  fontWeight: 800,
-                  lineHeight: 1.1,
-                  marginBottom: '16px',
-                  color: darkMode ? '#f1f5f9' : '#0f172a',
-                  letterSpacing: '-0.02em',
-                }}>
-                  {' '}
-                  <span style={{
-                    color: '#3b82f6',
-                  }}>
-                    {profile.name}
-                  </span>
-                </h1>
-
-                {/* Title */}
-                <p style={{
-                  fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
-                  fontWeight: 600,
-                  marginBottom: '20px',
-                  color: darkMode ? '#94a3b8' : '#475569',
-                }}>
-                  {profile.title}
-                </p>
-
-                {/* Divider */}
-                <div style={{
-                  width: '60px', height: '3px',
-                  borderRadius: '99px',
-                  background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
-                  marginBottom: '24px',
-                }} />
-
-                {/* Animated roles + tech stack */}
-                <HeroHighlights darkMode={darkMode} />
-
-                {/* CTA buttons */}
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '36px' }}>
-                  <button
-                    onClick={() => handleDownloadResume('both')}
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '8px',
-                      padding: '13px 28px',
-                      borderRadius: '10px',
-                      background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-                      color: '#fff',
-                      fontWeight: 700,
-                      fontSize: '0.95rem',
-                      border: 'none',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 20px rgba(59,130,246,0.4)',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)';
-                      (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 28px rgba(59,130,246,0.5)';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
-                      (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(59,130,246,0.4)';
-                    }}
-                  >
-                    <Download className="w-4 h-4" />
-                    Download Resume
-                  </button>
-
-                  <a
-                    href={`mailto:${profile.email}`}
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '8px',
-                      padding: '13px 28px',
-                      borderRadius: '10px',
-                      border: darkMode ? '1.5px solid rgba(148,163,184,0.3)' : '1.5px solid rgba(71,85,105,0.25)',
-                      color: darkMode ? '#e2e8f0' : '#1e293b',
-                      fontWeight: 600,
-                      fontSize: '0.95rem',
-                      textDecoration: 'none',
-                      background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-                      backdropFilter: 'blur(8px)',
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s, border-color 0.2s, background 0.2s',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)';
-                      (e.currentTarget as HTMLAnchorElement).style.borderColor = '#3b82f6';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
-                      (e.currentTarget as HTMLAnchorElement).style.borderColor = darkMode ? 'rgba(148,163,184,0.3)' : 'rgba(71,85,105,0.25)';
-                    }}
-                  >
-                    <Mail className="w-4 h-4" />
-                    Get In Touch
-                  </a>
-                </div>
-
-                {/* Social links */}
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  {[
-                    { href: profile.github, icon: <Github className="w-5 h-5" />, label: 'GitHub' },
-                    { href: profile.linkedin, icon: <Linkedin className="w-5 h-5" />, label: 'LinkedIn' },
-                    { href: profile.twitter, icon: <TwitterIcon className="w-5 h-5" />, label: 'Twitter' },
-                    { href: `mailto:${profile.email}`, icon: <Mail className="w-5 h-5" />, label: 'Email' },
-                  ].map(({ href, icon, label }) => (
-                    <a
-                      key={label}
-                      href={href}
-                      target={href.startsWith('http') ? '_blank' : undefined}
-                      rel="noopener noreferrer"
-                      title={label}
-                      style={{
-                        width: '44px', height: '44px',
-                        borderRadius: '10px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(71,85,105,0.15)',
-                        background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
-                        color: darkMode ? '#94a3b8' : '#475569',
-                        textDecoration: 'none',
-                        transition: 'all 0.2s',
-                      }}
-                      onMouseEnter={e => {
-                        const el = e.currentTarget as HTMLAnchorElement;
-                        el.style.background = 'rgba(59,130,246,0.15)';
-                        el.style.borderColor = 'rgba(59,130,246,0.5)';
-                        el.style.color = '#3b82f6';
-                        el.style.transform = 'translateY(-2px)';
-                      }}
-                      onMouseLeave={e => {
-                        const el = e.currentTarget as HTMLAnchorElement;
-                        el.style.background = darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
-                        el.style.borderColor = darkMode ? 'rgba(148,163,184,0.15)' : 'rgba(71,85,105,0.15)';
-                        el.style.color = darkMode ? '#94a3b8' : '#475569';
-                        el.style.transform = 'translateY(0)';
-                      }}
-                    >
-                      {icon}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* ── Right: Profile Photo ── */}
-              <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
-                {/* Outer glow ring */}
-                <div style={{
-                  position: 'absolute',
-                  width: '320px', height: '320px',
-                  borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(59,130,246,0.20) 0%, transparent 70%)',
-                  filter: 'blur(20px)',
-                  animation: 'slowPulse 4s ease-in-out infinite',
-                }} />
-
-                {/* Photo card */}
-                <div style={{
-                  position: 'relative',
-                  width: '260px', height: '260px',
-                  borderRadius: '50%',
-                  padding: '4px',
-                  background: 'linear-gradient(135deg, #3b82f6, #8b5cf6, #3b82f6)',
-                  backgroundSize: '200% 200%',
-                  animation: 'gradientMove 4s ease infinite',
-                  boxShadow: darkMode
-                    ? '0 0 40px rgba(59,130,246,0.30), 0 20px 60px rgba(0,0,0,0.40)'
-                    : '0 0 40px rgba(59,130,246,0.20), 0 20px 60px rgba(0,0,0,0.12)',
-                }}>
+              <div className="relative mb-8 group w-[85%] mx-auto">
+                <div className="absolute inset-0 bg-[#FF4D00] rounded-[32px] rotate-3 group-hover:rotate-1 transition-transform duration-500" />
+                <div className="relative aspect-square overflow-hidden rounded-[32px] bg-[#262423] shadow-inner">
                   <img
                     src={profile.image}
                     alt={profile.name}
-                    style={{
-                      width: '100%', height: '100%',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      border: darkMode ? '4px solid #0f172a' : '4px solid #ffffff',
-                    }}
-                    loading="eager"
+                    className="w-full h-full object-cover transition-all duration-700 hover:scale-110"
                   />
-                </div>
-
-                {/* Floating badge — projects */}
-                <div style={{
-                  position: 'absolute',
-                  top: '10px', right: '-10px',
-                  padding: '10px 16px',
-                  borderRadius: '12px',
-                  background: darkMode ? 'rgba(15,23,42,0.90)' : 'rgba(255,255,255,0.92)',
-                  border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(203,213,225,0.8)',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                  textAlign: 'center',
-                  minWidth: '90px',
-                }}>
-                  <p style={{
-                    fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
-                    background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>6+</p>
-                  <p style={{ fontSize: '11px', color: darkMode ? '#94a3b8' : '#64748b', fontWeight: 600, marginTop: '2px' }}>Projects</p>
-                </div>
-
-                {/* Floating badge — experience */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: '10px', left: '-10px',
-                  padding: '10px 16px',
-                  borderRadius: '12px',
-                  background: darkMode ? 'rgba(15,23,42,0.90)' : 'rgba(255,255,255,0.92)',
-                  border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(203,213,225,0.8)',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                  textAlign: 'center',
-                  minWidth: '90px',
-                }}>
-                  <p style={{
-                    fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
-                    background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>Web3</p>
-                  <p style={{ fontSize: '11px', color: darkMode ? '#94a3b8' : '#64748b', fontWeight: 600, marginTop: '2px' }}>Developer</p>
-                </div>
-
-                {/* Floating badge — tech stack */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-10px', right: '10px',
-                  padding: '10px 16px',
-                  borderRadius: '12px',
-                  background: darkMode ? 'rgba(15,23,42,0.90)' : 'rgba(255,255,255,0.92)',
-                  border: darkMode ? '1px solid rgba(148,163,184,0.15)' : '1px solid rgba(203,213,225,0.8)',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                  textAlign: 'center',
-                  minWidth: '90px',
-                }}>
-                  <p style={{
-                    fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
-                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}>DeFi</p>
-                  <p style={{ fontSize: '11px', color: darkMode ? '#94a3b8' : '#64748b', fontWeight: 600, marginTop: '2px' }}>Builder</p>
                 </div>
               </div>
 
-            </div>
+              <h1 className="text-3xl font-bold mt-4 mb-3 tracking-tight uppercase text-[#151312]">{profile.name}</h1>
 
-            {/* Scroll cue */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '80px' }}>
-              <button
-                onClick={() => scrollToSection('about')}
-                style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: darkMode ? '#475569' : '#94a3b8',
-                  animation: 'bounce 2s infinite',
-                }}
-              >
-                <span style={{ fontSize: '12px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Scroll</span>
-                <ChevronDown className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
+              <div className="mb-8">
+                <p className="text-[#151312]/60 font-medium max-w-[260px] mx-auto leading-relaxed text-[14px]">
+                  Blockchain Engineer who build high-performance DeFi protocols & production-ready smart contracts in Ethereum and Solana.
+                </p>
+              </div>
 
-          {/* Keyframe animations */}
-          <style>{`
-          @keyframes slowPulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.08); }
-          }
-          @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(8px); }
-          }
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-          }
-        `}</style>
-        </section>
-        {/* ══════════════════════════════════════════════════════ */}
-
-        {/* Main Content */}
-        <main className="container mx-auto px-4 md:px-6 pb-16 md:pb-20 max-w-5xl space-y-12 md:space-y-20">
-          {/* About Section */}
-          <section id="about" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">About Me</h3>
-            <div className={`p-4 md:p-6 lg:p-8 rounded-2xl border transition-colors ${cardBg}`}>
-              <p className={`text-sm md:text-base lg:text-lg leading-relaxed ${darkMode ? 'text-slate-300' : 'text-gray-600'}`}>
-                {profile.bio}
-              </p>
-            </div>
-          </section>
-
-          {/* Skills Section */}
-          <section id="skills" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Technical Skills</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
-              {skills.map((skillGroup, idx) => (
-                <div key={idx} className={`p-4 md:p-6 rounded-2xl border transition-colors ${cardBg}`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`${accentColor}`}>{skillGroup.icon}</div>
-                    <h4 className="text-base md:text-lg font-semibold">{skillGroup.category}</h4>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {skillGroup.items.map((skill, i) => (
-                      <span
-                        key={i}
-                        className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm transition-colors ${darkMode ? 'bg-slate-800 text-slate-300' : 'bg-gray-100 text-gray-700'}`}
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Projects Section */}
-          <section id="projects" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Featured Projects</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              {projects.map((project, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setSelectedProject(project)}
-                  className={`p-4 md:p-6 rounded-2xl border transition-all cursor-pointer ${cardBg} hover:shadow-xl hover:scale-100 md:hover:scale-105 active:scale-95`}
-                >
-                  <div className={`relative mb-3 overflow-hidden rounded-xl border ${darkMode ? 'border-slate-800 bg-slate-900' : 'border-gray-200 bg-gray-50'}`}>
-                    <div className="aspect-video w-full">
-                      <img
-                        alt={`${project.title} preview`}
-                        className="h-full w-full object-cover transition duration-300 ease-out"
-                        loading="lazy"
-                        src={project.image}
-                      />
-                    </div>
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
-                  </div>
-                  <h4 className="text-lg md:text-xl font-semibold mb-2">{project.title}</h4>
-                  <p className={`text-xs md:text-sm mb-4 ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tech.slice(0, 3).map((tech, i) => (
-                      <span
-                        key={i}
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${accentBg} ${accentColor}`}
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {project.tech.length > 3 && (
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${accentBg} ${accentColor}`}>
-                        +{project.tech.length - 3} more
-                      </span>
-                    )}
-                  </div>
-                  <p className={`text-xs ${accentColor}`}>Click to view details →</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Education Section */}
-          <section id="education" className="scroll-mt-20 pt-16 md:pt-24 pb-16 md:pb-24 border-b transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}">
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">Education</h3>
-            <div className="space-y-6">
-              {education.map((edu, idx) => (
-                <div
-                  key={idx}
-                  className={`p-4 md:p-6 lg:p-8 rounded-2xl border transition-all ${cardBg} hover:shadow-lg`}
-                >
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-4">
-                    <div>
-                      <h4 className="text-lg md:text-xl lg:text-2xl font-semibold mb-1">{edu.institution}</h4>
-                      <p className={`text-sm md:text-base font-medium ${accentColor}`}>{edu.degree} in {edu.field}</p>
-                      <p className={`text-xs md:text-sm ${darkMode ? 'text-slate-500' : 'text-gray-500'}`}>{edu.year}</p>
-                    </div>
-                    <div className={`px-3 py-1 rounded-full text-sm font-semibold ${accentBg} ${accentColor} w-fit`}>
-                      GPA: {edu.gpa}
-                    </div>
-                  </div>
-                  {/* <div>
-                  <h5 className="text-sm md:text-base font-semibold mb-3">Key Achievements</h5>
-                  <ul className="space-y-2">
-                    {edu.achievements.map((achievement, i) => (
-                      <li key={i} className={`flex gap-3 text-xs md:text-sm ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
-                        <span className={`${accentColor} mt-0.5 flex-shrink-0`}>✓</span>
-                        <span>{achievement}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div> */}
-                </div>
-              ))}
-            </div>
-          </section>
-        </main>
-
-        {/* Project Detail Modal */}
-        {selectedProject && (
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:p-6"
-            onClick={() => setSelectedProject(null)}
-          >
-            <div
-              className={`${modalBg} rounded-2xl max-w-3xl w-full max-h-[90vh] md:max-h-[95vh] overflow-y-auto border ${darkMode ? 'border-slate-800' : 'border-gray-200'}`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 md:p-6 lg:p-8">
-                <div className="flex justify-between items-start mb-4 md:mb-6 gap-4">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-2 break-words">{selectedProject.title}</h3>
-                    <p className={`text-sm md:text-base ${darkMode ? 'text-slate-400' : 'text-gray-600'}`}>
-                      {selectedProject.description}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setSelectedProject(null)}
-                    className={`flex-shrink-0 p-2 rounded-lg transition ${darkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-200'}`}
+              <div className="flex gap-6 mb-6">
+                {[
+                  { icon: <Twitter size={16} fill="currentColor" />, link: profile.twitter },
+                  { icon: <Linkedin size={16} fill="currentColor" />, link: profile.linkedin },
+                  // { icon: <Github size={16} fill="currentColor" />, link: profile.github },
+                  {
+                    icon: (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 4.5v15c0 .85-.65 1.5-1.5 1.5H19.5V8.25L12 13.5 4.5 8.25V21H1.5c-.85 0-1.5-.65-1.5-1.5v-15c0-1.5 1.75-2.25 3-1.25L12 9l9-5.75c1.25-1 3-.25 3 1.25z" />
+                      </svg>
+                    ),
+                    link: `mailto:${profile.email}`
+                  },
+                ].map((item, i) => (
+                  <a
+                    key={i}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#151312]/50 hover:text-[#FF4D00] transition-all transform hover:scale-110"
                   >
-                    <X className="w-5 h-5" />
+                    {item.icon}
+                  </a>
+                ))}
+              </div>
+
+              <div className="w-full space-y-3">
+                <button
+                  onClick={() => handleDownloadResume()}
+                  className="w-full py-4 bg-[#FF4D00] text-white rounded-2xl font-black tracking-widest text-[12px] uppercase hover:bg-[#e64600] transition-all transform hover:-translate-y-1 shadow-2xl shadow-orange-500/30"
+                >
+                  DOWNLOAD RESUME
+                </button>
+                <a
+                  href={profile.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 border-2 border-[#151312]/10 text-[#151312] rounded-2xl font-black tracking-widest text-[12px] uppercase hover:bg-[#151312] hover:text-white transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                >
+                  <Github size={14} /> GITHUB PROFILE
+                </a>
+              </div>
+            </div>
+          </aside>
+
+          {/* ── MAIN CONTENT ── */}
+          <main ref={mainRef} className="flex-1 px-6 md:px-10 lg:px-20 pt-16 lg:pt-32 space-y-64 lg:h-full lg:overflow-y-auto no-scrollbar scroll-smooth">
+
+            {/* HERO SECTION */}
+            <section id="home" className="relative group">
+              <div className="space-y-0">
+                <h2 className={styles.sectionTitle}>BLOCKCHAIN</h2>
+                <h2 className={`${styles.sectionTitle} text-[#FF4D00]`}>ENGINEER</h2>
+              </div>
+
+              <p className="text-xl md:text-2xl text-white/40 max-w-xl font-medium leading-relaxed mt-12">
+                Passionate about creating <span className="text-white">secure, scalable DeFi protocols</span> and decentralized applications. Specializing in Web3 ecosystems and production-grade <span className="text-[#FF4D00]">smart contracts</span>.
+              </p>
+
+
+
+
+              <div className="flex flex-wrap gap-16 mt-20">
+                {[
+                  { label: "PROJECTS", val: "+08" },
+                  { label: "PROTOCOLS", val: "+03" },
+                  { label: "HACKATHONS.", val: "+06" },
+                ].map((stat, i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="text-7xl font-black tracking-tighter text-white">{stat.val}</div>
+                    <div className="text-[11px] font-black text-white/30 tracking-[0.2em] uppercase">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* SKILLS SECTION */}
+            <section id="skills">
+              <div className="mb-12">
+                <h2 className={styles.sectionTitle}>SKILLS</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {skills.map((skill, i) => (
+                  <div key={i} className={`${styles.card} p-6 rounded-[24px]`}>
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-[#FF4D00]">
+                        {skill.icon}
+                      </div>
+                      <h4 className="text-lg font-black uppercase tracking-tight">{skill.category}</h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {skill.items.map((item, j) => {
+                        const color = (i + j) % 2 === 0 ? 'text-[#FF4D00]' : 'text-[#FFFFFF]';
+                        return (
+                          <span key={j} className={`text-[10px] font-bold tracking-wider uppercase bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 group-hover:border-white/10 transition-colors ${color}`}>
+                            {item}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* PROJECTS SECTION */}
+            <section id="projects">
+              <div className="mb-12">
+                <h2 className={styles.sectionTitle}>PROJECTS</h2>
+              </div>
+
+              <div className="space-y-8">
+                {projects.map((project, i) => (
+                  <div
+                    key={i}
+                    className={`${styles.card} flex flex-col md:flex-row gap-8 items-center group cursor-pointer`}
+                    onClick={() => setSelectedProject(project)}
+                  >
+                    <div className="w-full md:w-32 aspect-square rounded-2xl overflow-hidden bg-[#262423] flex-shrink-0">
+                      <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-2xl font-black mb-2 flex items-center gap-3 tracking-tight">
+                        {project.title}
+                        <ExternalLink size={18} className="text-[#CCFF00] opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </h4>
+                      <p className="text-gray-500 line-clamp-2 mb-4 font-medium text-sm">{project.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {project.tech.slice(0, 4).map((t, j) => (
+                          <span key={j} className="text-[9px] font-black tracking-widest uppercase bg-white/5 px-2 py-1 rounded text-gray-500 border border-white/5">{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* EDUCATION SECTION */}
+            <section id="education">
+              <div className="mb-12">
+                <h2 className={styles.sectionTitle}>EDUCATION</h2>
+              </div>
+              <div className="space-y-12">
+                {education.map((edu, i) => (
+                  <div key={i} className="relative pl-8 border-l border-white/10">
+                    <div className="absolute left-[-5px] top-0 w-[10px] h-[10px] rounded-full bg-[#FF4D00]" />
+                    <div className="text-[10px] font-black tracking-[0.2em] text-[#FF4D00] mb-3 uppercase">{edu.year}</div>
+                    <h4 className="text-xl font-black mb-2 tracking-tight uppercase">{edu.institution}</h4>
+                    <p className="text-gray-400 text-md font-bold mb-2">{edu.degree} · {edu.field}</p>
+                    <div className="text-[15px] font-black text-gray-300 tracking-widest">GPA: {edu.gpa}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+
+          
+            
+
+          
+            
+
+          
+            {/* FOOTER */}
+            <footer className="pt-32 pb-20 border-t border-white/5 mt-20">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+                <div className="space-y-10">
+                  <h3 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] text-white">
+                    LET'S BUILD THE <br />
+                    <span className="text-[#FF4D00]">FUTURE</span> OF WEB3.
+                  </h3>
+                  <p className="text-gray-400 max-w-sm font-medium leading-relaxed text-sm md:text-base">
+                    Currently open for new opportunities and collaborations in DeFi, Layer 2 scaling, and Smart Contract Security in Ethereum and Solana ecosystems.
+                  </p>
+                  <div className="flex flex-wrap gap-6 pt-4">
+                    
+                    {/* <div className="flex gap-4">
+                      {[
+                         { icon: <Twitter size={20} fill="currentColor" />, link: profile.twitter },
+                         { icon: <Linkedin size={20} fill="currentColor" />, link: profile.linkedin },
+                         { icon: <Github size={20} fill="currentColor" />, link: profile.github },
+                      ].map((social, i) => (
+                        <a
+                          key={i}
+                          href={social.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#FF4D00] hover:border-[#FF4D00]/50 transition-all transform hover:-translate-y-1"
+                        >
+                          {social.icon}
+                        </a>
+                      ))}
+                    </div> */}
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-10 md:gap-20">
+                  <div className="space-y-8">
+                    <h4 className="text-[10px] font-black tracking-[0.4em] text-[#FF4D00] uppercase px-1">NAVIGATION</h4>
+                    <ul className="space-y-4">
+                      {['home', 'skills', 'projects', 'education'].map((id) => (
+                        <li key={id}>
+                          <button 
+                            onClick={() => scrollToSection(id)} 
+                            className="text-xs md:text-sm font-black text-gray-500 hover:text-white transition-colors uppercase tracking-[0.2em] group flex items-center gap-2"
+                          >
+                            <span className="w-0 group-hover:w-4 h-[2px] bg-[#FF4D00] transition-all" />
+                            {id}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="space-y-8">
+                    <h4 className="text-[10px] font-black tracking-[0.4em] text-[#FF4D00] uppercase px-1">CONTACT</h4>
+                    <ul className="space-y-4">
+                      <li>
+                        <a 
+                          href={`mailto:${profile.email}`} 
+                          className="px-6 py-2 bg-[#FF4D00] text-white rounded-2xl font-black text-[12px] tracking-widest uppercase hover:bg-[#e64600] transition-all transform hover:-translate-y-1 shadow-lg shadow-orange-500/20 flex items-center gap-3"
+                        >
+                          <Send size={18} /> GET IN TOUCH
+                        </a>
+                      </li>
+                      <li className="text-xs md:text-sm font-black text-gray-500 uppercase tracking-[0.1em]">
+                        BASED IN INDIA
+                      </li>
+                      <li className="pt-4">
+                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+                           <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                           <span className="text-[9px] font-black text-green-500 tracking-widest uppercase">Available for Hire</span>
+                         </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-12 border-t border-white/5 relative z-10">
+                <div className="text-2xl font-black tracking-tighter uppercase text-white">
+                  Arpit<span className="text-[#FF4D00]">.</span>
+                </div>
+                <p className="text-gray-500 text-[9px] md:text-[10px] font-black tracking-[0.3em] uppercase text-center md:text-left">
+                  © 2026 DESIGNED & BUILT BY ARPIT SATPUTE. ALL RIGHTS RESERVED.
+                </p>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => mainRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+                    className="group w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#FF4D00] hover:border-[#FF4D00] transition-all shadow-xl"
+                  >
+                    <HomeIcon size={20} className="group-hover:scale-110 transition-transform" />
                   </button>
                 </div>
+              </div>
+            </footer>
 
-                <div className="space-y-4 md:space-y-6">
-                  {/* Website Preview with Browser Frame */}
-                  <div>
-                    <h4 className="font-semibold mb-3 md:mb-4 text-base md:text-lg">Live Preview</h4>
-                    <div className={`rounded-2xl overflow-hidden transition-all ${darkMode ? 'bg-slate-900 shadow-2xl' : 'bg-white shadow-xl'}`}>
-                      {/* Browser Header */}
-                      {/* <div className={`flex items-center gap-3 px-4 py-3 border-b ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-gray-100 border-gray-200'}`}>
-                      <div className="flex gap-2">
-                        <div className={`w-3 h-3 rounded-full ${darkMode ? 'bg-red-500' : 'bg-red-400'}`} />
-                        <div className={`w-3 h-3 rounded-full ${darkMode ? 'bg-yellow-500' : 'bg-yellow-400'}`} />
-                        <div className={`w-3 h-3 rounded-full ${darkMode ? 'bg-green-500' : 'bg-green-400'}`} />
+          </main>
+        </div>
+
+      </div>
+
+      {/* FLOATING NAVIGATION */}
+      <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-[90]">
+        <div className="bg-[#1c1a19]/80 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 flex items-center gap-6 shadow-2xl">
+          {[
+            { id: 'home', icon: <HomeIcon size={18} /> },
+            { id: 'skills', icon: <Wrench size={18} /> },
+            { id: 'projects', icon: <Briefcase size={18} /> },
+            { id: 'education', icon: <PenTool size={18} /> },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className={`p-2.5 rounded-full transition-all duration-300 ${activeSection === item.id
+                ? 'bg-[#FF4D00] text-white scale-110'
+                : 'text-gray-500 hover:text-white'
+                }`}
+            >
+              {item.icon}
+            </button>
+          ))}
+          <div className="w-[1px] h-6 bg-white/10 mx-1" />
+          <button
+            onClick={() => handleDownloadResume()}
+            className="text-[#FF4D00] hover:scale-125 transition-transform"
+          >
+            <Download size={18} />
+          </button>
+        </div>
+      </nav>
+
+      {/* PROJECT MODAL */}
+      {selectedProject && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setSelectedProject(null)} />
+          <div className="bg-[#1c1a19] w-full max-w-4xl max-h-[90vh] rounded-[40px] border border-white/10 relative animate-in fade-in zoom-in duration-300 shadow-2xl shadow-black overflow-y-auto custom-scrollbar scroll-smooth">
+            <div className="p-6 md:p-10 relative">
+              <div className="sticky top-0 z-20 flex justify-between items-start mb-8 gap-4 bg-[#1c1a19]/90 backdrop-blur-md pb-4 pt-2 -mt-2">
+                <div className="flex-1">
+                  <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4 leading-none text-white">{selectedProject.title}</h3>
+                  <p className="text-gray-400 font-medium leading-relaxed text-sm md:text-base">
+                    {selectedProject.description}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-[#FF4D00] transition-colors sticky top-0"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-12">
+                {/* Website Preview with Browser Frame */}
+                <div className="px-1 md:px-4">
+                  <h4 className="font-black text-[11px] tracking-[0.3em] uppercase text-[#FF4D00] mb-6">Live Preview</h4>
+                  <div className="rounded-3xl overflow-hidden bg-[#262423] border border-white/5 shadow-2xl relative">
+                    <div className="flex items-center gap-2 px-6 py-4 border-b border-white/5 bg-white/2">
+                      <div className="flex gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
                       </div>
-                      <div className={`flex-1 px-3 py-1.5 rounded text-xs truncate font-mono ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-white text-gray-700'} border ${darkMode ? 'border-slate-600' : 'border-gray-300'}`}>
+                      <div className="flex-1 px-4 py-1.5 rounded-xl bg-black/20 text-[10px] text-white/30 truncate font-mono border border-white/5">
                         {selectedProject.liveLink}
                       </div>
-                    </div> */}
-                      {/* Browser Content with Desktop Scale */}
-                      <div style={{
-                        height: '500px',
-                        overflow: 'hidden',
-                        backgroundColor: darkMode ? '#1e293b' : '#f8fafc',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        justifyContent: 'center',
-                        padding: '0'
-                      }}>
-                        <div style={{
-                          transform: 'scale(0.5)',
-                          transformOrigin: 'top center',
-                          width: '1380px',
-                          margin: '0',
-                          padding: '0'
-                        }}>
-                          <iframe
-                            src={selectedProject.liveLink}
-                            title={selectedProject.title}
-                            className="border-0"
-                            style={{
-                              width: '1380px',
-                              height: '1000px',
-                              display: 'block',
-                              margin: '0',
-                              padding: '0'
-                            }}
-                            loading="lazy"
-                          />
-                        </div>
+                    </div>
+                    {/* Browser Content with Desktop Scale */}
+                    <div className="h-[400px] md:h-[500px] overflow-hidden flex items-start justify-center bg-[#0d0c0c] relative">
+                      <div className="w-[1380px] origin-top scale-[0.3] md:scale-[0.4] lg:scale-[0.45] xl:scale-[0.5] flex justify-center">
+                        <iframe
+                          src={selectedProject.liveLink}
+                          title={selectedProject.title}
+                          className="border-0 w-[1380px] h-[1000px] bg-[#1c1a19] pointer-events-auto"
+                          loading="lazy"
+                        />
                       </div>
                     </div>
-
                   </div>
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div>
-                    <h4 className="font-semibold mb-2 md:mb-3 text-base md:text-lg">Key Features & Achievements</h4>
-                    <ul className="space-y-2">
+                    <h4 className="font-black text-[11px] tracking-[0.3em] uppercase text-[#FF4D00] mb-6 px-1">Key Achievements</h4>
+                    <ul className="space-y-4">
                       {selectedProject.details.map((detail, i) => (
-                        <li key={i} className={`flex gap-3 text-xs md:text-sm ${darkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                          <span className={`${accentColor} mt-1 flex-shrink-0`}>•</span>
+                        <li key={i} className="flex gap-4 text-xs md:text-sm font-medium text-gray-400 leading-relaxed group">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#FF4D00] mt-1.5 flex-shrink-0 group-hover:scale-125 transition-transform" />
                           <span>{detail}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div>
-                    <h4 className="font-semibold mb-2 md:mb-3 text-base md:text-lg">Tech Stack</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedProject.tech.map((tech, i) => (
-                        <span
-                          key={i}
-                          className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${accentBg} ${accentColor}`}
-                        >
-                          {tech}
-                        </span>
-                      ))}
+                  <div className="space-y-8">
+                    <div>
+                      <h4 className="font-black text-[11px] tracking-[0.3em] uppercase text-[#FF4D00] mb-6 px-1">Tech Stack</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProject.tech.map((tech, i) => (
+                          <span
+                            key={i}
+                            className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black tracking-widest text-[#FF4D00] uppercase"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex flex-col md:flex-row gap-3 md:gap-4 pt-4 md:pt-6">
-                    <a
-                      href={selectedProject.liveLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium transition text-sm md:text-base ${darkMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'} text-white flex-1`}
-                    >
-                      <Globe className="w-4 h-4" />
-                      <span>Live Demo</span>
-                    </a>
-                    <a
-                      href={selectedProject.githubLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-medium border-2 transition text-sm md:text-base flex-1 ${darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-gray-300 hover:border-gray-400'}`}
-                    >
-                      <Github className="w-4 h-4" />
-                      <span>Source</span>
-                    </a>
+                    <div className="flex gap-4 pt-6">
+                      <a
+                        href={selectedProject.liveLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-5 bg-[#FF4D00] text-white rounded-2xl font-black text-[11px] tracking-widest text-center hover:opacity-90 transition-all flex items-center justify-center gap-3 transform hover:-translate-y-1 shadow-lg shadow-orange-500/20"
+                      >
+                        <Globe size={18} /> LIVE SITE
+                      </a>
+                      {selectedProject.githubLink && (
+                        <a
+                          href={selectedProject.githubLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 py-5 border-2 border-white/10 text-white rounded-2xl font-black text-[11px] tracking-widest text-center hover:bg-white/5 transition-all flex items-center justify-center gap-3 transform hover:-translate-y-1"
+                        >
+                          <Github size={18} /> GITHUB
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        )}
-
-        {/* Footer */}
-        <footer className={`border-t transition-colors ${darkMode ? 'border-slate-800' : 'border-gray-200'}`}>
-          <div className="container mx-auto px-4 md:px-6 py-6 md:py-8 text-center">
-            <p className={`text-xs md:text-sm ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-              © 2025 {profile.name}. Built with React.
-            </p>
-          </div>
-        </footer>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
