@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Download, Github, Linkedin, Mail, ExternalLink, Code2, Database, Blocks, ChevronDown, X, Globe, Menu, Sun, Moon, Settings, Languages } from 'lucide-react';
+import { Download, Github, Linkedin, Mail, Code2, Database, Blocks, ChevronDown, X, Globe, Menu, Sun, Moon, Settings, Languages } from 'lucide-react';
 import profileImage from "@/assets/profile.jpeg";
 import { TwitterIcon } from '@/components/icons';
 
