@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Github, Linkedin, Code2, Database, Blocks,
   X, Globe, Settings, Languages,
-  Briefcase, ExternalLink, ChevronLeft, ChevronRight,
+  Briefcase, ExternalLink,
   Twitter, Download, Sun, Moon, Menu
 } from 'lucide-react';
 import profileImage from "@/assets/profile.jpeg";
@@ -23,37 +23,6 @@ export default function Portfolio() {
   const [isDark, setIsDark] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    if (isHovered) return;
-    
-    const interval = setInterval(() => {
-      if (scrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          // Scroll by one card width (approx 420px + gap)
-          scrollRef.current.scrollBy({ left: 452, behavior: 'smooth' });
-        }
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [isHovered]);
-
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -452, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 452, behavior: 'smooth' });
-    }
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -532,6 +501,7 @@ export default function Portfolio() {
                         <Linkedin size={18} />
                       </span>
                       <span className="text-sm font-medium">Connect on LinkedIn</span>
+                                          
                     </a>
                   </div>
                 </div>
