@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Github, Linkedin, Code2, Database, Blocks,
   X, Globe, Settings, Languages,
-  Home as HomeIcon, Briefcase, Wrench, PenTool, ExternalLink,
-  Twitter, Send, Download
+  Briefcase, ExternalLink, ChevronLeft, ChevronRight,
+  Twitter, Download, Sun, Moon, Menu
 } from 'lucide-react';
 import profileImage from "@/assets/profile.jpeg";
 
@@ -17,23 +17,47 @@ interface Project {
   details: string[];
 }
 
-const styles = {
-  sectionTitle: "text-[clamp(3.5rem,8vw,6.5rem)] font-black leading-[0.8] tracking-tighter uppercase",
-  sectionTitleFaded: "text-[clamp(3.5rem,8vw,6.5rem)] font-black leading-[0.8] tracking-tighter uppercase text-white/10 -mt-2",
-  card: "bg-white/5 border border-white/5 rounded-[32px] p-8 hover:border-[#FF4D00]/30 transition-all duration-500 group",
-  iconContainer: "w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-[#FF4D00] mb-6 group-hover:scale-110 transition-transform duration-500",
-};
-
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState('home');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const mainRef = useRef<HTMLElement>(null);
+  const [isDark, setIsDark] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    const mainElement = mainRef.current;
-    if (!mainElement) return;
+    if (isHovered) return;
+    
+    const interval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Scroll by one card width (approx 420px + gap)
+          scrollRef.current.scrollBy({ left: 452, behavior: 'smooth' });
+        }
+      }
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isHovered]);
 
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -452, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 452, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
     const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
       const sections = ['home', 'skills', 'projects', 'education'];
       const current = sections.find(section => {
         const element = document.getElementById(section);
@@ -46,10 +70,9 @@ export default function Portfolio() {
       if (current) setActiveSection(current);
     };
 
-    mainElement.addEventListener('scroll', handleScroll);
-    return () => mainElement.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
   const profile = {
     name: "Arpit Satpute",
     title: "Blockchain Developer",
@@ -59,7 +82,7 @@ export default function Portfolio() {
     github: "https://github.com/arpitSatpute",
     linkedin: "https://linkedin.com/in/arpitsatpute",
     twitter: "https://twitter.com/arpits_jsx",
-    bio: "Full Stack & Web3 Engineer specializing in Ethereum and Solana ecosystem development. I design and deploy production-grade smart contracts while building seamless frontend experiences with React and Web3 libraries. Passionate about creating secure, scalable DeFi protocols and decentralized applications that push the boundaries of blockchain innovation."
+    bio: "Software Engineer specializing in Blockchain and Full-Stack Development, with production experience across DeFi, SaaS, and EdTech domains. I design and audit Solidity smart contracts, cross-chain protocols, and NFT systems — while building scalable Java Spring Boot backends and React frontends. "
   };
 
   const skills = [
@@ -215,8 +238,8 @@ export default function Portfolio() {
       institution: "J D College of Engineering and Management, Nagpur",
       degree: "Bachelor of Technology",
       field: "Computer Engineering",
-      year: "2021 - 2025",
-      gpa: "9.57/10",
+      year: "2022 - 2026",
+      gpa: "9.4/10",
 
     },
     {
@@ -237,6 +260,7 @@ export default function Portfolio() {
     }
   ];
 
+
   const handleDownloadResume = () => {
     const resumePath = "/assets/Arpit_Satpute_Blockchain_Developer.pdf";
     const link = document.createElement("a");
@@ -248,349 +272,342 @@ export default function Portfolio() {
   };
 
   const scrollToSection = (section: string) => {
+    setIsMenuOpen(false);
     setActiveSection(section);
     const element = document.getElementById(section);
-    if (element && mainRef.current) {
-      const top = element.offsetTop;
-      mainRef.current.scrollTo({
-        top: top - 48,
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
         behavior: 'smooth'
       });
     }
   };
 
   return (
-    <div className={`min-h-screen bg-[#151312] font-['Poppins'] selection:bg-[#FF4D00] selection:text-white transition-colors duration-500 overflow-x-hidden text-white`}>
-      {/* Background Gradient Orbs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#FF4D00] opacity-[0.03] blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[#CCFF00] opacity-[0.02] blur-[100px]" />
-      </div>
+    <div className={`${isDark ? 'dark' : ''} scroll-smooth`}>
+      <div className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased font-body min-h-screen transition-colors duration-300">
+        <style>
+          {`
+            @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+            .shimmer { position: relative; overflow: hidden; }
+            .shimmer::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: rgba(255,255,255,0.18); transform: skewX(-20deg); transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+            .shimmer:hover::after { left: 160%; }
+            .nl { position: relative; }
+            .nl::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1.5px; background: currentColor; transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
+            .nl:hover::after, .nl.on::after { width: 100%; }
+            .nl.on { font-weight: 500; }
+            .card-h { transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.18s; }
+            .card-h:hover { transform: translateY(-4px); }
+            .font-display { font-family: 'PT Sans', sans-serif; }
+            .font-body { font-family: 'DM Sans', sans-serif; }
+          `}
+        </style>
 
-      <div className="max-w-[1440px] mx-auto lg:h-screen lg:overflow-hidden relative z-10">
-        <div className="flex flex-col lg:flex-row lg:h-full lg:gap-0">
+        <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-sm shadow-black/5' : ''}`}>
+          <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }} className="font-display font-bold text-xl tracking-tight relative z-10">
+              <span className="text-zinc-900 dark:text-white">Arpit</span><span className="text-[#FF6B2B]">.</span>
+            </a>
 
-          {/* ── LEFT SIDEBAR ── */}
-          <aside className="lg:w-[420px] lg:flex-shrink-0 lg:h-full lg:flex lg:flex-col lg:justify-center p-6 md:p-8 lg:p-10">
-            <div className="bg-[#FAFAFA] rounded-[40px] shadow-2xl text-[#151312] p-10 py-16 flex flex-col items-center text-center relative overflow-hidden">
-              {/* Decorative Dashed Path */}
-              <svg className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" viewBox="0 0 200 400">
-                <path d="M-20,40 Q60,60 80,140 T180,220" fill="none" stroke="#FF4D00" strokeWidth="2" strokeDasharray="6,6" />
-                <path d="M220,300 Q140,320 120,380 T20,440" fill="none" stroke="#FF4D00" strokeWidth="2" strokeDasharray="6,6" />
-              </svg>
+            <ul className="hidden md:flex items-center gap-8 text-sm">
+              {['home', 'skills', 'projects', 'education'].map((id) => (
+                <li key={id}>
+                  <button onClick={() => scrollToSection(id)} className={`nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors capitalize ${activeSection === id ? 'on !text-zinc-900 dark:!text-white' : ''}`}>
+                    {id}
+                  </button>
+                </li>
+              ))}
+            </ul>
 
-              <div className="relative mb-8 group w-[85%] mx-auto">
-                <div className="absolute inset-0 bg-[#FF4D00] rounded-[32px] rotate-3 group-hover:rotate-1 transition-transform duration-500" />
-                <div className="relative aspect-square overflow-hidden rounded-[32px] bg-[#262423] shadow-inner">
-                  <img
-                    src={profile.image}
-                    alt={profile.name}
-                    className="w-full h-full object-cover transition-all duration-700 hover:scale-110"
-                  />
+            <div className="flex items-center gap-3">
+              <button onClick={() => setIsDark(!isDark)} className="w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+              <button onClick={handleDownloadResume} className="hidden md:inline-flex items-center gap-2 shimmer bg-[#FF6B2B] text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-[#FF8F5C] transition-colors">
+                Resume <Download size={14} />
+              </button>
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800">
+                {isMenuOpen ? <X size={16} /> : <Menu size={16} />}
+              </button>
+            </div>
+          </nav>
+
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900 shadow-xl absolute top-16 left-0 w-full">
+              <ul className="flex flex-col px-6 py-5 gap-4 text-sm font-medium">
+                {['home', 'skills', 'projects', 'education'].map((id) => (
+                  <li key={id}>
+                    <button onClick={() => scrollToSection(id)} className="block text-zinc-700 dark:text-zinc-300 hover:text-[#FF6B2B] transition-colors capitalize">
+                      {id}
+                    </button>
+                  </li>
+                ))}
+                <li className="pt-2 border-t border-zinc-100 dark:border-zinc-900">
+                  <button onClick={handleDownloadResume} className="inline-flex items-center gap-2 shimmer bg-[#FF6B2B] text-white font-medium text-sm px-5 py-2.5 rounded-full">
+                    Resume <Download size={14} />
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+        </header>
+
+        <main>
+          {/* HERO SECTION */}
+          <section id="home" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+            <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#FF6B2B]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-zinc-200/50 dark:bg-zinc-800/30 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 max-w-6xl mx-auto px-6 py-24 w-full">
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                  <p className="text-sm font-medium text-[#FF6B2B] tracking-widest uppercase mb-4">Available for work</p>
+                  <h1 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-zinc-900 dark:text-white mb-6">
+                    Hi, I'm <span className="text-[#FF6B2B]">Arpit</span>
+                  </h1>
+                  <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-md mb-10">
+                    {/* <strong className="font-medium text-zinc-700 dark:text-zinc-300">Blockchain Engineer</strong>. */}
+                    {profile.bio}
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    <button onClick={() => scrollToSection('projects')} className="shimmer inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium px-7 py-3.5 rounded-full hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors text-sm">
+                      View my work <Briefcase size={16} />
+                    </button>
+                    <a href={profile.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-medium px-7 py-3.5 rounded-full hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-sm">
+                      <Github size={16} /> Github
+                    </a>
+                  </div>
+                  <div className="flex gap-8 mt-14 pt-8 border-t border-zinc-100 dark:border-zinc-900">
+                    <div><p className="font-display font-bold text-3xl text-zinc-900 dark:text-white">+08</p><p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Projects</p></div>
+                    <div><p className="font-display font-bold text-3xl text-zinc-900 dark:text-white">+03</p><p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Protocols</p></div>
+                    <div><p className="font-display font-bold text-3xl text-zinc-900 dark:text-white">+06</p><p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Hackathons</p></div>
+                  </div>
+                </div>
+
+                <div className="flex justify-center md:justify-end">
+                  <div className="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                    <div className="w-full h-full rounded-3xl overflow-hidden bg-[#d4d4d8]">
+                      <img src={profile.image} alt={profile.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="absolute -bottom-4 -left-4 bg-[#FF6B2B] text-white font-display font-bold text-sm px-4 py-2.5 rounded-2xl shadow-lg">Open to projects</div>
+                  </div>
                 </div>
               </div>
-
-              <h1 className="text-3xl font-bold mt-4 mb-3 tracking-tight uppercase text-[#151312]">{profile.name}</h1>
-
-              <div className="mb-8">
-                <p className="text-[#151312]/60 font-medium max-w-[260px] mx-auto leading-relaxed text-[14px]">
-                  Blockchain Engineer who build high-performance DeFi protocols & production-ready smart contracts in Ethereum and Solana.
-                </p>
-              </div>
-
-              <div className="flex gap-6 mb-6">
-                {[
-                  { icon: <Twitter size={16} fill="currentColor" />, link: profile.twitter },
-                  { icon: <Linkedin size={16} fill="currentColor" />, link: profile.linkedin },
-                  // { icon: <Github size={16} fill="currentColor" />, link: profile.github },
-                  {
-                    icon: (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M24 4.5v15c0 .85-.65 1.5-1.5 1.5H19.5V8.25L12 13.5 4.5 8.25V21H1.5c-.85 0-1.5-.65-1.5-1.5v-15c0-1.5 1.75-2.25 3-1.25L12 9l9-5.75c1.25-1 3-.25 3 1.25z" />
-                      </svg>
-                    ),
-                    link: `mailto:${profile.email}`
-                  },
-                ].map((item, i) => (
-                  <a
-                    key={i}
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#151312]/50 hover:text-[#FF4D00] transition-all transform hover:scale-110"
-                  >
-                    {item.icon}
-                  </a>
-                ))}
-              </div>
-
-              <div className="w-full space-y-3">
-                <button
-                  onClick={() => handleDownloadResume()}
-                  className="w-full py-4 bg-[#FF4D00] text-white rounded-2xl font-black tracking-widest text-[12px] uppercase hover:bg-[#e64600] transition-all transform hover:-translate-y-1 shadow-2xl shadow-orange-500/30"
-                >
-                  DOWNLOAD RESUME
-                </button>
-                <a
-                  href={profile.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-4 border-2 border-[#151312]/10 text-[#151312] rounded-2xl font-black tracking-widest text-[12px] uppercase hover:bg-[#151312] hover:text-white transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
-                >
-                  <Github size={14} /> GITHUB PROFILE
-                </a>
-              </div>
             </div>
-          </aside>
+          </section>
 
-          {/* ── MAIN CONTENT ── */}
-          <main ref={mainRef} className="flex-1 px-6 md:px-10 lg:px-20 pt-16 lg:pt-32 space-y-64 lg:h-full lg:overflow-y-auto no-scrollbar scroll-smooth">
-
-            {/* HERO SECTION */}
-            <section id="home" className="relative group">
-              <div className="space-y-0">
-                <h2 className={styles.sectionTitle}>BLOCKCHAIN</h2>
-                <h2 className={`${styles.sectionTitle} text-[#FF4D00]`}>ENGINEER</h2>
+          {/* SKILLS SECTION */}
+          <section id="skills" className="py-24 relative overflow-hidden bg-zinc-50 dark:bg-zinc-900/40">
+            {/* Background glowing orbs */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#FF6B2B]/5 dark:bg-[#FF6B2B]/10 rounded-full blur-[100px] pointer-events-none z-0" />
+            
+            <div className="max-w-6xl mx-auto px-6 relative z-10">
+              <div className="mb-16 text-center md:text-left flex flex-col items-center md:items-start">
+                <div className="inline-block">
+                  <p className="text-xs font-bold text-[#FF6B2B] tracking-[0.2em] uppercase mb-3 bg-[#FF6B2B]/10 px-4 py-2 rounded-full">
+                    Expertise
+                  </p>
+                </div>
+                <h2 className="font-display font-black text-4xl md:text-5xl text-zinc-900 dark:text-white mt-2">
+                  Technical <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B2B] to-orange-400">Skills</span>
+                </h2>
               </div>
-
-              <p className="text-xl md:text-2xl text-white/40 max-w-xl font-medium leading-relaxed mt-12">
-                Passionate about creating <span className="text-white">secure, scalable DeFi protocols</span> and decentralized applications. Specializing in Web3 ecosystems and production-grade <span className="text-[#FF4D00]">smart contracts</span>.
-              </p>
-
-
-
-
-              <div className="flex flex-wrap gap-16 mt-20">
-                {[
-                  { label: "PROJECTS", val: "+08" },
-                  { label: "PROTOCOLS", val: "+03" },
-                  { label: "HACKATHONS.", val: "+06" },
-                ].map((stat, i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="text-7xl font-black tracking-tighter text-white">{stat.val}</div>
-                    <div className="text-[11px] font-black text-white/30 tracking-[0.2em] uppercase">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* SKILLS SECTION */}
-            <section id="skills">
-              <div className="mb-12">
-                <h2 className={styles.sectionTitle}>SKILLS</h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid md:grid-cols-3 gap-6 md:gap-8">
                 {skills.map((skill, i) => (
-                  <div key={i} className={`${styles.card} p-6 rounded-[24px]`}>
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-[#FF4D00]">
+                  <article 
+                    key={i} 
+                    className="group relative bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl p-8 border border-zinc-200/50 dark:border-zinc-800/50 hover:border-[#FF6B2B]/50 hover:shadow-[0_8px_30px_rgb(255,107,43,0.12)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+                  >
+                    {/* Subtle corner glow on hover */}
+                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#FF6B2B]/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                    <div className="relative z-10">
+                      <div className="w-14 h-14 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800/80 rounded-2xl mb-8 group-hover:scale-110 group-hover:bg-[#FF6B2B] group-hover:text-white group-hover:shadow-lg transition-all duration-500 text-[#FF6B2B]">
                         {skill.icon}
                       </div>
-                      <h4 className="text-lg font-black uppercase tracking-tight">{skill.category}</h4>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {skill.items.map((item, j) => {
-                        const color = (i + j) % 2 === 0 ? 'text-[#FF4D00]' : 'text-[#FFFFFF]';
-                        return (
-                          <span key={j} className={`text-[10px] font-bold tracking-wider uppercase bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 group-hover:border-white/10 transition-colors ${color}`}>
+                      <h3 className="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-6 group-hover:text-[#FF6B2B] transition-colors">{skill.category}</h3>
+                      <div className="flex flex-wrap gap-2.5">
+                        {skill.items.map((item, j) => (
+                          <span 
+                            key={j} 
+                            className="text-sm font-medium bg-zinc-50 dark:bg-zinc-800/50 text-zinc-600 dark:text-zinc-400 px-4 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700/50 group-hover:border-zinc-300 dark:group-hover:border-zinc-600 hover:!bg-[#FF6B2B] hover:!text-white hover:!border-[#FF6B2B] transition-all duration-300 cursor-default shadow-sm"
+                          >
                             {item}
                           </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* PROJECTS SECTION */}
-            <section id="projects">
-              <div className="mb-12">
-                <h2 className={styles.sectionTitle}>PROJECTS</h2>
-              </div>
-
-              <div className="space-y-8">
-                {projects.map((project, i) => (
-                  <div
-                    key={i}
-                    className={`${styles.card} flex flex-col md:flex-row gap-8 items-center group cursor-pointer`}
-                    onClick={() => setSelectedProject(project)}
-                  >
-                    <div className="w-full md:w-32 aspect-square rounded-2xl overflow-hidden bg-[#262423] flex-shrink-0">
-                      <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-2xl font-black mb-2 flex items-center gap-3 tracking-tight">
-                        {project.title}
-                        <ExternalLink size={18} className="text-[#CCFF00] opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </h4>
-                      <p className="text-gray-500 line-clamp-2 mb-4 font-medium text-sm">{project.description}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {project.tech.slice(0, 4).map((t, j) => (
-                          <span key={j} className="text-[9px] font-black tracking-widest uppercase bg-white/5 px-2 py-1 rounded text-gray-500 border border-white/5">{t}</span>
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </article>
                 ))}
               </div>
-            </section>
+            </div>
+          </section>
 
-            {/* EDUCATION SECTION */}
-            <section id="education">
-              <div className="mb-12">
-                <h2 className={styles.sectionTitle}>EDUCATION</h2>
-              </div>
-              <div className="space-y-12">
-                {education.map((edu, i) => (
-                  <div key={i} className="relative pl-8 border-l border-white/10">
-                    <div className="absolute left-[-5px] top-0 w-[10px] h-[10px] rounded-full bg-[#FF4D00]" />
-                    <div className="text-[10px] font-black tracking-[0.2em] text-[#FF4D00] mb-3 uppercase">{edu.year}</div>
-                    <h4 className="text-xl font-black mb-2 tracking-tight uppercase">{edu.institution}</h4>
-                    <p className="text-gray-400 text-md font-bold mb-2">{edu.degree} · {edu.field}</p>
-                    <div className="text-[15px] font-black text-gray-300 tracking-widest">GPA: {edu.gpa}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-
-          
-            
-
-          
-            
-
-          
-            {/* FOOTER */}
-            <footer className="pt-32 pb-20 border-t border-white/5 mt-20">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20 animate-in fade-in slide-in-from-bottom-10 duration-1000">
-                <div className="space-y-10">
-                  <h3 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] text-white">
-                    LET'S BUILD THE <br />
-                    <span className="text-[#FF4D00]">FUTURE</span> OF WEB3.
-                  </h3>
-                  <p className="text-gray-400 max-w-sm font-medium leading-relaxed text-sm md:text-base">
-                    Currently open for new opportunities and collaborations in DeFi, Layer 2 scaling, and Smart Contract Security in Ethereum and Solana ecosystems.
-                  </p>
-                  <div className="flex flex-wrap gap-6 pt-4">
-                    
-                    {/* <div className="flex gap-4">
-                      {[
-                         { icon: <Twitter size={20} fill="currentColor" />, link: profile.twitter },
-                         { icon: <Linkedin size={20} fill="currentColor" />, link: profile.linkedin },
-                         { icon: <Github size={20} fill="currentColor" />, link: profile.github },
-                      ].map((social, i) => (
-                        <a
-                          key={i}
-                          href={social.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-gray-400 hover:text-[#FF4D00] hover:border-[#FF4D00]/50 transition-all transform hover:-translate-y-1"
-                        >
-                          {social.icon}
-                        </a>
-                      ))}
-                    </div> */}
-                  </div>
-                </div>
+          {/* PROJECTS SECTION */}
+          <section id="projects" className="py-32 relative bg-zinc-50 dark:bg-zinc-950/50 border-y border-zinc-200 dark:border-zinc-900/50">
+            <div className="max-w-7xl mx-auto px-6">
+              <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 relative items-start">
                 
-                <div className="grid grid-cols-2 gap-10 md:gap-20">
-                  <div className="space-y-8">
-                    <h4 className="text-[10px] font-black tracking-[0.4em] text-[#FF4D00] uppercase px-1">NAVIGATION</h4>
-                    <ul className="space-y-4">
-                      {['home', 'skills', 'projects', 'education'].map((id) => (
-                        <li key={id}>
-                          <button 
-                            onClick={() => scrollToSection(id)} 
-                            className="text-xs md:text-sm font-black text-gray-500 hover:text-white transition-colors uppercase tracking-[0.2em] group flex items-center gap-2"
-                          >
-                            <span className="w-0 group-hover:w-4 h-[2px] bg-[#FF4D00] transition-all" />
-                            {id}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                {/* Sticky Left Column */}
+                <div className="w-full lg:w-[35%] lg:sticky lg:top-32 flex flex-col pt-4">
+                  <div className="inline-block mb-6">
+                    <p className="text-xs font-black text-[#FF6B2B] tracking-[0.3em] uppercase bg-[#FF6B2B]/10 px-5 py-2.5 rounded-full w-max border border-[#FF6B2B]/20">
+                      Portfolio
+                    </p>
                   </div>
-                  <div className="space-y-8">
-                    <h4 className="text-[10px] font-black tracking-[0.4em] text-[#FF4D00] uppercase px-1">CONTACT</h4>
-                    <ul className="space-y-4">
-                      <li>
-                        <a 
-                          href={`mailto:${profile.email}`} 
-                          className="px-6 py-2 bg-[#FF4D00] text-white rounded-2xl font-black text-[12px] tracking-widest uppercase hover:bg-[#e64600] transition-all transform hover:-translate-y-1 shadow-lg shadow-orange-500/20 flex items-center gap-3"
-                        >
-                          <Send size={18} /> GET IN TOUCH
-                        </a>
-                      </li>
-                      <li className="text-xs md:text-sm font-black text-gray-500 uppercase tracking-[0.1em]">
-                        BASED IN INDIA
-                      </li>
-                      <li className="pt-4">
-                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
-                           <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                           <span className="text-[9px] font-black text-green-500 tracking-widest uppercase">Available for Hire</span>
-                         </div>
-                      </li>
-                    </ul>
+                  <h2 className="font-display font-black text-5xl md:text-6xl text-zinc-900 dark:text-white mb-6 leading-[1.1] tracking-tight">
+                    Featured <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#FF6B2B] to-orange-400">Works.</span>
+                  </h2>
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-10 text-lg max-w-md">
+                    A curated selection of my most recent projects, showcasing my expertise in blockchain development, frontend architecture, and full-stack engineering.
+                  </p>
+                  <a href={profile.github} target="_blank" rel="noopener noreferrer" className="hidden lg:inline-flex items-center gap-3 text-sm font-bold tracking-widest uppercase text-zinc-900 dark:text-white border-b-2 border-zinc-200 dark:border-zinc-800 hover:border-[#FF6B2B] pb-2 transition-all w-max group">
+                    Explore full archive <ExternalLink size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </a>
+                </div>
+
+                {/* Scrolling Right Column (Projects list) */}
+                <div className="w-full lg:w-[65%] flex flex-col gap-16 md:gap-32">
+                  {projects.map((project, i) => (
+                    <article 
+                      key={i} 
+                      onClick={() => setSelectedProject(project)} 
+                      className="group cursor-pointer relative bg-white dark:bg-[#111111] rounded-[40px] p-3 md:p-4 border border-zinc-200 dark:border-zinc-800 hover:border-[#FF6B2B]/50 transition-all duration-700 hover:shadow-[0_20px_60px_-15px_rgba(255,107,43,0.15)] flex flex-col"
+                    >
+                      {/* Big Image Top */}
+                      <div className="w-full aspect-[4/3] sm:aspect-[16/10] rounded-[32px] overflow-hidden bg-zinc-200 dark:bg-zinc-900 relative shadow-inner">
+                        <img src={project.image} alt={project.title} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-1000 ease-in-out" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-700" />
+                        
+                        {/* Hover Overlay Button */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                          <div className="bg-white dark:bg-[#FF6B2B] text-zinc-900 dark:text-white px-8 py-4 rounded-full font-bold tracking-widest uppercase text-sm flex items-center gap-2 shadow-2xl transform translate-y-8 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                            View Project <ExternalLink size={16} />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Content Bottom */}
+                      <div className="pt-8 px-4 md:px-6 pb-6 flex flex-col sm:flex-row gap-8 justify-between items-start">
+                        <div className="flex-1">
+                          <h3 className="font-display font-black text-3xl md:text-4xl text-zinc-900 dark:text-white mb-4 group-hover:text-[#FF6B2B] transition-colors">{project.title}</h3>
+                          <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-lg text-base md:text-lg">
+                            {project.description}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap sm:flex-col gap-2 sm:items-end w-full sm:w-auto mt-2 sm:mt-0">
+                          {project.tech.slice(0, 3).map((t, j) => (
+                            <span key={j} className={`text-[10px] md:text-[11px] font-bold tracking-widest uppercase px-3 md:px-4 py-2 rounded-xl border whitespace-nowrap ${j === 0 ? 'text-[#FF6B2B] bg-[#FF6B2B]/10 border-[#FF6B2B]/20' : 'text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800/80 border-zinc-200 dark:border-zinc-700'}`}>
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                  
+                  <a href={profile.github} target="_blank" rel="noopener noreferrer" className="lg:hidden inline-flex items-center gap-3 text-sm font-bold tracking-widest uppercase text-zinc-900 dark:text-white border-b-2 border-zinc-200 dark:border-zinc-800 hover:border-[#FF6B2B] pb-2 transition-all w-max group mt-4">
+                    Explore full archive <ExternalLink size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* EDUCATION SECTION */}
+          <section id="education" className="py-24 bg-zinc-50 dark:bg-zinc-900/40">
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="grid md:grid-cols-2 gap-16 items-start">
+                <div className="order-1">
+                  <p className="text-xs font-medium text-[#FF6B2B] tracking-widest uppercase mb-3">Academic Background</p>
+                  <h2 className="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight mb-6">Education &<br/>Qualifications</h2>
+                  <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed mb-8 max-w-md">
+                    A strong foundation in computer engineering and continuous learning have been the stepping stones of my career in blockchain development.
+                  </p>
+                  <div className="flex gap-4">
+                    <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                      <span className="w-10 h-10 flex items-center justify-center bg-zinc-200 dark:bg-zinc-800 rounded-lg group-hover:bg-[#FF6B2B]/20 transition-colors shrink-0">
+                        <Linkedin size={18} />
+                      </span>
+                      <span className="text-sm font-medium">Connect on LinkedIn</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="order-2">
+                  <div className="space-y-6">
+                    {education.map((edu, i) => (
+                      <div key={i} className="bg-white dark:bg-zinc-900 rounded-2xl p-7 border border-zinc-100 dark:border-zinc-800 hover:border-[#FF6B2B] transition-colors">
+                        <div className="flex justify-between items-start mb-4">
+                          <span className="text-xs font-bold bg-orange-50 dark:bg-zinc-800 text-[#FF6B2B] px-3 py-1 rounded-full">{edu.year}</span>
+                          <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{edu.gpa}</span>
+                        </div>
+                        <h3 className="font-display font-bold text-xl text-zinc-900 dark:text-white mb-2">{edu.institution}</h3>
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">{edu.degree} {edu.field && `· ${edu.field}`}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
 
-              <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-12 border-t border-white/5 relative z-10">
-                <div className="text-2xl font-black tracking-tighter uppercase text-white">
-                  Arpit<span className="text-[#FF4D00]">.</span>
-                </div>
-                <p className="text-gray-500 text-[9px] md:text-[10px] font-black tracking-[0.3em] uppercase text-center md:text-left">
-                  © 2026 DESIGNED & BUILT BY ARPIT SATPUTE. ALL RIGHTS RESERVED.
+          {/* CONNECT SECTION */}
+          <section id="connect" className="py-24 md:py-32 relative overflow-hidden bg-white dark:bg-[#151515] border-t border-zinc-200 dark:border-zinc-900">
+            {/* Glowing Orb */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#FF6B2B]/5 dark:bg-[#FF6B2B]/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+            
+            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+              <div className="inline-block mb-6">
+                <p className="text-xs font-bold text-[#FF6B2B] tracking-[0.2em] uppercase bg-[#FF6B2B]/10 px-4 py-2 rounded-full">
+                  What's Next?
                 </p>
-                <div className="flex items-center gap-4">
-                  <button 
-                    onClick={() => mainRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-                    className="group w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#FF4D00] hover:border-[#FF4D00] transition-all shadow-xl"
-                  >
-                    <HomeIcon size={20} className="group-hover:scale-110 transition-transform" />
-                  </button>
-                </div>
               </div>
-            </footer>
+              <h2 className="font-display font-black text-5xl md:text-7xl mb-6 tracking-tight text-zinc-900 dark:text-white">
+                Let's work <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B2B] to-orange-400">together.</span>
+              </h2>
+              <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+                Whether you have a project in mind, need a talented developer for your team, or just want to say hi, my inbox is always open. Let's build something amazing.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <a 
+                  href={`mailto:${profile.email}`} 
+                  className="w-full sm:w-auto px-8 py-4 bg-[#FF6B2B] hover:bg-orange-500 text-white rounded-full font-bold tracking-widest uppercase text-sm flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#FF6B2B]/30"
+                >
+                  <Briefcase size={18} /> Start a Project
+                </a>
+                <a 
+                  href={profile.linkedin} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-full sm:w-auto px-8 py-4 bg-zinc-100 hover:bg-zinc-200 dark:bg-[#1a1a1a] dark:hover:bg-zinc-800 text-zinc-900 dark:text-white rounded-full font-bold tracking-widest uppercase text-sm flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 shadow-sm dark:shadow-none border border-zinc-200 dark:border-zinc-700"
+                >
+                  <Linkedin size={18} /> Connect on LinkedIn
+                </a>
+              </div>
+            </div>
+          </section>
 
-          </main>
-        </div>
-
-      </div>
-
-      {/* FLOATING NAVIGATION */}
-      <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-[90]">
-        <div className="bg-[#1c1a19]/80 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 flex items-center gap-6 shadow-2xl">
-          {[
-            { id: 'home', icon: <HomeIcon size={18} /> },
-            { id: 'skills', icon: <Wrench size={18} /> },
-            { id: 'projects', icon: <Briefcase size={18} /> },
-            { id: 'education', icon: <PenTool size={18} /> },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className={`p-2.5 rounded-full transition-all duration-300 ${activeSection === item.id
-                ? 'bg-[#FF4D00] text-white scale-110'
-                : 'text-gray-500 hover:text-white'
-                }`}
-            >
-              {item.icon}
-            </button>
-          ))}
-          <div className="w-[1px] h-6 bg-white/10 mx-1" />
-          <button
-            onClick={() => handleDownloadResume()}
-            className="text-[#FF4D00] hover:scale-125 transition-transform"
-          >
-            <Download size={18} />
-          </button>
-        </div>
-      </nav>
-
+          {/* FOOTER */}
+          <footer className="border-t border-zinc-200 dark:border-zinc-900 py-12">
+            <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-2">
+                <span className="font-display font-bold text-xl tracking-tight text-zinc-900 dark:text-white">Arpit</span><span className="text-[#FF6B2B] font-bold text-xl">.</span>
+              </div>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center md:text-left">
+                © {new Date().getFullYear()} Arpit Satpute. All rights reserved.
+              </p>
+              <div className="flex gap-4 text-zinc-400">
+                <a href={profile.twitter} target="_blank" rel="noopener noreferrer" className="hover:text-[#FF6B2B] transition-colors"><Twitter size={18} /></a>
+                <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-[#FF6B2B] transition-colors"><Linkedin size={18} /></a>
+                <a href={profile.github} target="_blank" rel="noopener noreferrer" className="hover:text-[#FF6B2B] transition-colors"><Github size={18} /></a>
+              </div>
+            </div>
+          </footer>
+        </main>
       {/* PROJECT MODAL */}
       {selectedProject && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
@@ -696,6 +713,7 @@ export default function Portfolio() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
