@@ -69,7 +69,7 @@ export const projects = [
       title: "Proxima",
       description: "AI-Powered Exam Integrity System | Real-time AI-driven exam monitoring platform",
       liveLink: "https://proxima-frontend-three.vercel.app",
-      githubLink: "https://github.com/Yash-Zade/Proxima.git",
+      githubLink: "https://github.com/Yash-Zade/proxima-monorepo",
       image: "https://image2url.com/images/1766082557102-61505964-6cde-4b64-992c-d325b6b8e037.png",
       tech: ["Spring Boot", "React", "React Native", "WebRTC", "Gemini AI", "PostgreSQL"],
       details: [
